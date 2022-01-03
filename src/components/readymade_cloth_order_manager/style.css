@@ -1,0 +1,10 @@
+.main {
+	min-height: 92vh;
+}
+
+  .ToggleClassBtnRadio {
+	width: 150px;
+  }
+  input[type="radio"] {
+    display: none;
+}

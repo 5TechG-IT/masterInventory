@@ -1,0 +1,12 @@
+.small-box.bg-warning .inner {
+    color: white;
+}
+.small-box.bg-warning a {
+    color: white !important;
+}
+.col-lg-3 .small-box h3, .col-md-3 .small-box h3, .col-xl-3 .small-box h3 {
+    font-size: 1.2rem;
+}
+.content-wrapper{
+    margin-left: 0px !important;
+}
