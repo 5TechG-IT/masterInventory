@@ -61,7 +61,7 @@ function Login() {
             password,
           })
         );
-        history.push("/");
+        history.push("/dashboard");
       }
     }
   };
@@ -87,7 +87,7 @@ function Login() {
     const auth = JSON.parse(localStorage.getItem("auth"));
     console.log({ auth });
     if (auth?.isAuthenticated) {
-      history.push("/");
+      history.push("/dashhboard");
     }
   });
 
@@ -95,7 +95,7 @@ function Login() {
     <div className="wrapper">
       {/* {redirect()} */}
       {/* <h3 className="heading pb-4">गुरुप्रसाद कलेक्शन</h3> */}
-      <h3 className="heading pb-4">D. B. Foods & Beverages</h3>
+      <h3 className="heading pb-4">LIBERTY LIGHT HOUSE</h3>
       <Card
         className="pt-5 pb-5 pl-3 pr-3 w-25 login-temp"
         style={{ boxShadow: "0px 0px 30px 0px rgba(30, 23, 16, 0.2)" }}
