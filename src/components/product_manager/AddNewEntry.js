@@ -26,6 +26,7 @@ export class AddNewEntry extends Component {
         super(props);
         this.state = {
             name: null,
+            description: null,
             unitPrice: 0,
             quntity: 0,
             amount: 0,
@@ -35,7 +36,7 @@ export class AddNewEntry extends Component {
     handleAddSubmit(e) {
         e.preventDefault();
 
-        const query = `INSERT INTO products(name, unitPrice, quantity) VALUES('${this.state.name}', ${this.state.unitPrice}, ${this.state.quantity});`;
+        const query = `INSERT INTO products(name,description, unitPrice, quantity) VALUES('${this.state.name}','${this.state.description}', ${this.state.unitPrice}, ${this.state.quantity});`;
 
         let data = {
             crossDomain: true,
@@ -67,6 +68,18 @@ export class AddNewEntry extends Component {
                             size="small"
                             onChange={(e) =>
                                 this.setState({ name: e.target.value })
+                            }
+                        />
+                        <TextField
+                            id="description"
+                            label="description"
+                            variant="outlined"
+                            type="text"
+                            className="mr-2"
+                            required={true}
+                            size="small"
+                            onChange={(e) =>
+                                this.setState({ description: e.target.value })
                             }
                         />
 

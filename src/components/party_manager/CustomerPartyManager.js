@@ -61,6 +61,7 @@ export default class CustomerPartyManager extends Component {
             activeCustomerId: "",
             activeCustomerName: "",
             activeCustomerMobile: "",
+            activeCustomerAadharNo: "",
             activeCustomerAddress: "",
             activeCustomerCity: "",
             activeCustomerType: 4,
@@ -87,7 +88,7 @@ export default class CustomerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `UPDATE party SET name="${this.state.activeCustomerName}", mobile= ${this.state.activeCustomerMobile}, address="${this.state.activeCustomerAddress}",city="${this.state.activeCustomerCity}" WHERE id=${this.state.activeCustomerId};`;
+        const query = `UPDATE party SET name="${this.state.activeCustomerName}", mobile= ${this.state.activeCustomerMobile},aadharNo= "${this.state.activeCustomerAadharNo}", address="${this.state.activeCustomerAddress}",city="${this.state.activeCustomerCity}",type=${this.state.activeCustomerType} WHERE id=${this.state.activeCustomerId};`;
         console.log(query)
         let data = {
             crossDomain: true,
@@ -98,7 +99,9 @@ export default class CustomerPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("Party details updated successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
             })
             .catch((err) => {
                 console.log("error while updating party data", err);
@@ -109,7 +112,7 @@ export default class CustomerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `INSERT INTO party(name, mobile, address,city,type) VALUES('${this.state.activeCustomerName}', '${this.state.activeCustomerMobile}', '${this.state.activeCustomerAddress}','${this.state.activeCustomerCity}', ${this.state.activeCustomerType})`;
+        const query = `INSERT INTO party(name, mobile,aadharNo, address,city,type) VALUES('${this.state.activeCustomerName}', '${this.state.activeCustomerMobile}','${this.state.activeCustomerAadharNo}', '${this.state.activeCustomerAddress}','${this.state.activeCustomerCity}', ${this.state.activeCustomerType})`;
         console.log(query)
         let data = {
             crossDomain: true,
@@ -120,7 +123,9 @@ export default class CustomerPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("party details added successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
             })
             .catch((err) => {
                 console.log(err);
@@ -202,6 +207,7 @@ export default class CustomerPartyManager extends Component {
                     </td>
                     <td align="center">{customer["name"]}</td>
                     <td align="center">{customer["mobile"]}</td>
+                    <td align="center">{customer["aadharNo"]}</td>
                     <td align="center">{customer["address"]}</td>
                     <td align="center">
                         {customer["city"] == null ? 0 : customer["city"]}
@@ -215,6 +221,7 @@ export default class CustomerPartyManager extends Component {
                                     activeCustomerId: customer["id"],
                                     activeCustomerName: customer["name"],
                                     activeCustomerMobile: customer["mobile"],
+                                    activeCustomerAadharNo: customer["aadharNo"],
                                     activeCustomerAddress: customer["address"],
                                     activeCustomerCity: customer["city"],
                                     showUpdateModal: true,
@@ -306,6 +313,23 @@ export default class CustomerPartyManager extends Component {
                                         }
                                     />
                                 </Col>
+                                <Col>
+                                    <TextField
+                                        id="aadharNo"
+                                        label="aadharNo"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activeCustomerAadharNo
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activeCustomerAadharNo:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
                             </Row>
                             <Row>
                                 <Col>
@@ -343,6 +367,46 @@ export default class CustomerPartyManager extends Component {
                                             })
                                         }
                                     />
+                                </Col>
+                                <Col>
+                                    <FormControl
+                                        variant="filled"
+                                        style={{
+                                            minWidth: "120px",
+                                        }}
+                                        className="mt-2 ml-2"
+                                    >
+                                        <InputLabel id="demo-simple-select-outlined-label">
+                                            Type
+                                        </InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-outlined-label"
+                                            id="demo-simple-select-outlined"
+                                            label="type"
+                                            defaultValue={
+                                                this.state.activeCustomerType
+                                            }
+                                            onChange={(e) =>
+                                                this.setState({
+                                                    activeCustomerType:
+                                                        e.target.value,
+                                                })
+                                            }
+                                        >
+                                            <MenuItem value={1}>
+                                                Retailer
+                                            </MenuItem>
+                                            <MenuItem value={2}>
+                                                Distributor
+                                            </MenuItem>
+                                            <MenuItem value={3}>
+                                                Wholesaler
+                                            </MenuItem>
+                                            <MenuItem value={4}>
+                                                Customer
+                                            </MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </Col>
                             </Row>
                         </div>
@@ -444,6 +508,21 @@ export default class CustomerPartyManager extends Component {
                                                     }
                                                 />
                                             </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="aadharNo"
+                                                    label="aadharNo"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activeCustomerAadharNo:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
                                         </Row>
                                         <Row>
                                             <Col>
@@ -478,7 +557,36 @@ export default class CustomerPartyManager extends Component {
                                                     }
                                                 />
                                             </Col>
-                                            
+                                            <Col>
+                                                <FormControl
+                                                    variant="filled"
+                                                    style={{
+                                                        minWidth: "120px",
+                                                    }}
+                                                    className="mt-2 ml-2"
+                                                >
+                                                    <InputLabel id="demo-simple-select-outlined-label">
+                                                        Type
+                                                    </InputLabel>
+                                                    <Select
+                                                        labelId="demo-simple-select-outlined-label"
+                                                        id="demo-simple-select-outlined"
+                                                        label="type"
+                                                        defaultValue={4}
+                                                        onChange={(e) =>
+                                                            this.setState({
+                                                                activePWholesalerType:
+                                                                    e.target
+                                                                        .value,
+                                                            })
+                                                        }
+                                                    >
+                                                        <MenuItem value={4}>
+                                                            CustomerPartyManager
+                                                        </MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Col>
                                         </Row>
                                     </div>
                                     <hr />
@@ -511,6 +619,7 @@ export default class CustomerPartyManager extends Component {
                                                 <th>Customer Id</th>
                                                 <th>Name</th>
                                                 <th>Mobile No</th>
+                                                <th>Aadhar No</th>
                                                 <th>Address</th>
                                                 <th>city</th>
                                                 <th>Options</th>

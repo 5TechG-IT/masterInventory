@@ -70,6 +70,7 @@ class PartyManager extends Component {
       activePartyId: "",
       activePartyName: "",
       activePartyMobile: "",
+      activePartyAadharNo: null,
       activePartyAddress: "",
       activePartyCity: "",
       activePartyType: 1,
@@ -100,7 +101,7 @@ class PartyManager extends Component {
     e.preventDefault();
     let url = API_URL;
 
-    const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", address="${this.state.activePartyAddress}", city="${this.state.activePartyCity}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
+    const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", aadharNo="${this.state.activePartyAadharNo}", address="${this.state.activePartyAddress}", city="${this.state.activePartyCity}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -110,7 +111,10 @@ class PartyManager extends Component {
       .post(url, data)
       .then((res) => {
         toast.success("Party details updated successfully");
-        this.fetchPartiesData();
+        setTimeout(() => {
+          this.refreshParties();
+        }, 2000);
+        // this.fetchPartiesData();
       })
       .catch((err) => {
         console.log("error while updating party data", err);
@@ -121,7 +125,8 @@ class PartyManager extends Component {
     e.preventDefault();
     let url = API_URL;
 
-    const query = `INSERT INTO party(name, mobile, address, city, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAddress}', '${this.state.activePartyCity}', ${this.state.activePartyType})`;
+    const query = `INSERT INTO party(name, mobile,aadharNo, address, city, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}','${this.state.activePartyAadharNo}', '${this.state.activePartyAddress}', '${this.state.activePartyCity}', ${this.state.activePartyType})`;
+    console.log(query)
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -223,6 +228,7 @@ class PartyManager extends Component {
               </Button>
             </a>
           </td>
+          <td align="center">{party["aadharNo"]}</td>
           <td align="center">{party["address"]}</td>
           <td align="center">
             {party["city"] == null ? 0 : party["city"]}
@@ -240,7 +246,9 @@ class PartyManager extends Component {
                   activePartyId: party["id"],
                   activePartyName: party["name"],
                   activePartyMobile: party["mobile"],
+                  activePartyAadharNo: party["aadharNo"],
                   activePartyAddress: party["address"],
+                  activePartyCity: party["city"],
                   activePartyType: party["type"],
                   showUpdateModal: true,
                 });
@@ -322,6 +330,20 @@ class PartyManager extends Component {
                     }
                   />
                 </Col>
+                  <Col>
+                  <TextField
+                    id="aadharNo"
+                    label="aadharNo"
+                    variant="outlined"
+                    className="m-2"
+                    defaultValue={this.state.activePartyAadharNo}
+                    onChange={(e) =>
+                      this.setState({
+                        activePartyAadharNo: e.target.value,
+                      })
+                    }
+                  />
+                </Col>
               </Row>
               <Row>
                 <Col>
@@ -335,6 +357,21 @@ class PartyManager extends Component {
                     onChange={(e) =>
                       this.setState({
                         activePartyAddress: e.target.value,
+                      })
+                    }
+                  />
+                </Col>
+                <Col>
+                  <TextField
+                    id="city"
+                    s
+                    label="city"
+                    variant="outlined"
+                    className="m-2"
+                    defaultValue={this.state.activePartyCity}
+                    onChange={(e) =>
+                      this.setState({
+                        activePartyCity: e.target.value,
                       })
                     }
                   />
@@ -389,6 +426,7 @@ class PartyManager extends Component {
       </Modal>
     );
   }
+  
 
   render() {
     return (
@@ -512,6 +550,20 @@ class PartyManager extends Component {
                         />
                       </Col>
                       <Col>
+                        <TextField
+                          id="aadharNo"
+                          label="aadharNo"
+                          variant="outlined"
+                          className="m-2"
+                          defaultValue=""
+                          onChange={(e) =>
+                            this.setState({
+                              activePartyAadharNo: e.target.value,
+                            })
+                          }
+                        />
+                      </Col>
+                      <Col>
                         <FormControl
                           variant="outlined"
                           //   variant="filled"
@@ -574,6 +626,7 @@ class PartyManager extends Component {
                           <th>Party Id</th>
                           <th>Name</th>
                           <th>Mobile No</th>
+                          <th>Aadhar No</th>
                           <th>Address</th>
                           <th>City</th>
                           <th>Type</th>

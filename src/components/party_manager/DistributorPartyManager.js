@@ -65,6 +65,8 @@ export default class DistributorPartyManager extends Component {
             activePartyName: "",
             activePartyMobile: "",
             activePartyAddress: "",
+            activePartyAadharNo: "",
+            activePartyCity: "",
             activePartyType: 2,
             partiesData: null,
         };
@@ -89,7 +91,8 @@ export default class DistributorPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", address="${this.state.activePartyAddress}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
+        const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", aadharNo="${this.state.activePartyAadharNo}", address="${this.state.activePartyAddress}",city="${this.state.activePartyCity}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
+        console.log(query)
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -99,7 +102,10 @@ export default class DistributorPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("Party details updated successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
+                
             })
             .catch((err) => {
                 console.log("error while updating party data", err);
@@ -110,7 +116,7 @@ export default class DistributorPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `INSERT INTO party(name, mobile, address, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAddress}', ${this.state.activePartyType})`;
+        const query = `INSERT INTO party(name, mobile,aadharNo, address,city, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAadharNo}', '${this.state.activePartyAddress}','${this.state.activePartyCity}', ${this.state.activePartyType})`;
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -120,7 +126,9 @@ export default class DistributorPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("party details added successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
             })
             .catch((err) => {
                 console.log(err);
@@ -202,6 +210,7 @@ export default class DistributorPartyManager extends Component {
                     </td>
                     <td align="center">{party["name"]}</td>
                     <td align="center">{party["mobile"]}</td>
+                    <td align="center">{party["aadharNo"]}</td>
                     <td align="center">{party["address"]}</td>
                     <td align="center">
                         {party["city"] == null ? 0 : party["city"]}
@@ -215,7 +224,9 @@ export default class DistributorPartyManager extends Component {
                                     activePartyId: party["id"],
                                     activePartyName: party["name"],
                                     activePartyMobile: party["mobile"],
+                                    ativePartyAadharNo: party["aadharNo"],
                                     activePartyAddress: party["address"],
+                                    activePartyCity: party["city"],
                                     activePartyType: party["type"],
                                     showUpdateModal: true,
                                 });
@@ -306,6 +317,23 @@ export default class DistributorPartyManager extends Component {
                                         }
                                     />
                                 </Col>
+                                <Col>
+                                    <TextField
+                                        id="aadharNo"
+                                        label="aadharNo"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activePartyAadharNo
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activePartyAadharNo:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
                             </Row>
                             <Row>
                                 <Col>
@@ -321,6 +349,24 @@ export default class DistributorPartyManager extends Component {
                                         onChange={(e) =>
                                             this.setState({
                                                 activePartyAddress:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                                <Col>
+                                    <TextField
+                                        id="city"
+                                        s
+                                        label="city"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activePartyCity
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activePartyCity:
                                                     e.target.value,
                                             })
                                         }
@@ -357,6 +403,13 @@ export default class DistributorPartyManager extends Component {
                                             <MenuItem value={2}>
                                                 Distributor
                                             </MenuItem>
+                                            <MenuItem value={3}>
+                                                Wholesaler
+                                            </MenuItem>
+                                            <MenuItem value={4}>
+                                                Customer
+                                            </MenuItem>
+                                            
                                         </Select>
                                     </FormControl>
                                 </Col>
@@ -460,6 +513,21 @@ export default class DistributorPartyManager extends Component {
                                                     }
                                                 />
                                             </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="aadharNo"
+                                                    label="aadharNo"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activePartyAadharNo:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
                                         </Row>
                                         <Row>
                                             <Col>
@@ -473,6 +541,22 @@ export default class DistributorPartyManager extends Component {
                                                     onChange={(e) =>
                                                         this.setState({
                                                             activePartyAddress:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="city"
+                                                    s
+                                                    label="city"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activePartyCity:
                                                                 e.target.value,
                                                         })
                                                     }
@@ -502,9 +586,11 @@ export default class DistributorPartyManager extends Component {
                                                             })
                                                         }
                                                     >
+                                                       
                                                         <MenuItem value={2}>
-                                                            Distributor
+                                                            DistributorPartyManager
                                                         </MenuItem>
+                                                       
                                                     </Select>
                                                 </FormControl>
                                             </Col>
@@ -540,6 +626,8 @@ export default class DistributorPartyManager extends Component {
                                                 <th>Party Id</th>
                                                 <th>Name</th>
                                                 <th>Mobile No</th>
+                                                <th>Aadhar No</th>
+
                                                 <th>Address</th>
                                                 <th>city</th>
                                                 <th>Options</th>

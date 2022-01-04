@@ -61,7 +61,9 @@ export default class RetailerPartyManager extends Component {
             activePartyId: "",
             activePartyName: "",
             activePartyMobile: "",
+            activePartyAadharNo: null,
             activePartyAddress: "",
+            activePartyCity: "",
             activePartyType: 1,
             partiesData: null,
         };
@@ -86,7 +88,7 @@ export default class RetailerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", address="${this.state.activePartyAddress}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
+        const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}",aadharNo="${this.state.activePartyAadharNo}", address="${this.state.activePartyAddress}",city="${this.state.activePartyCity}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -96,7 +98,9 @@ export default class RetailerPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("Party details updated successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
             })
             .catch((err) => {
                 console.log("error while updating party data", err);
@@ -107,7 +111,7 @@ export default class RetailerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `INSERT INTO party(name, mobile, address, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAddress}', ${this.state.activePartyType})`;
+        const query = `INSERT INTO party(name, mobile, address,city,aadharNo, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAddress}', '${this.state.activePartyCity}','${this.state.activePartyAadharNo}', ${this.state.activePartyType})`;
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -117,7 +121,9 @@ export default class RetailerPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("party details added successfully");
-                this.fetchPartiesData();
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);
             })
             .catch((err) => {
                 console.log(err);
@@ -199,6 +205,7 @@ export default class RetailerPartyManager extends Component {
                     </td>
                     <td align="center">{party["name"]}</td>
                     <td align="center">{party["mobile"]}</td>
+                    <td align="center">{party["aadharNo"]}</td>
                     <td align="center">{party["address"]}</td>
                     <td align="center">
                         {party["city"] == null ? 0 : party["city"]}
@@ -212,7 +219,9 @@ export default class RetailerPartyManager extends Component {
                                     activePartyId: party["id"],
                                     activePartyName: party["name"],
                                     activePartyMobile: party["mobile"],
+                                    activePartyAadharNo: party["aadharNo"],
                                     activePartyAddress: party["address"],
+                                    activePartyCity: party["city"],
                                     activePartyType: party["type"],
                                     showUpdateModal: true,
                                 });
@@ -303,6 +312,23 @@ export default class RetailerPartyManager extends Component {
                                         }
                                     />
                                 </Col>
+                                <Col>
+                                    <TextField
+                                        id="aadharNo"
+                                        label="aadharNo"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activePartyAadharNo
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activePartyAadharNo:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
                             </Row>
                             <Row>
                                 <Col>
@@ -318,6 +344,24 @@ export default class RetailerPartyManager extends Component {
                                         onChange={(e) =>
                                             this.setState({
                                                 activePartyAddress:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
+                                <Col>
+                                    <TextField
+                                        id="city"
+                                        s
+                                        label="city"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activePartyCity
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activePartyCity:
                                                     e.target.value,
                                             })
                                         }
@@ -352,7 +396,13 @@ export default class RetailerPartyManager extends Component {
                                                 Retailer
                                             </MenuItem>
                                             <MenuItem value={2}>
-                                                Merchant
+                                                Distributor
+                                            </MenuItem>
+                                            <MenuItem value={2}>
+                                                Wholesaler
+                                            </MenuItem>
+                                            <MenuItem value={2}>
+                                                Customer
                                             </MenuItem>
                                         </Select>
                                     </FormControl>
@@ -457,6 +507,21 @@ export default class RetailerPartyManager extends Component {
                                                     }
                                                 />
                                             </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="aadharNo"
+                                                    label="aadharNo"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activePartyAadharNo:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
                                         </Row>
                                         <Row>
                                             <Col>
@@ -470,6 +535,22 @@ export default class RetailerPartyManager extends Component {
                                                     onChange={(e) =>
                                                         this.setState({
                                                             activePartyAddress:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="city"
+                                                    s
+                                                    label="city"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activePartyCity:
                                                                 e.target.value,
                                                         })
                                                     }
@@ -500,7 +581,7 @@ export default class RetailerPartyManager extends Component {
                                                         }
                                                     >
                                                         <MenuItem value={1}>
-                                                            DistributorPartyManager
+                                                            RetailerPartyManager
                                                         </MenuItem>
                                                     </Select>
                                                 </FormControl>
@@ -537,6 +618,7 @@ export default class RetailerPartyManager extends Component {
                                                 <th>Party Id</th>
                                                 <th>Name</th>
                                                 <th>Mobile No</th>
+                                                <th>Aadhar No</th>
                                                 <th>Address</th>
                                                 <th>city</th>
                                                 <th>Options</th>

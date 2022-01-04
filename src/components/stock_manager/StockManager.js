@@ -162,6 +162,9 @@ export default class StockManager extends Component {
         console.log("record deleted successfully");
         toast.error("Record deleted successfully");
         this.updateProductCount(productId, quantity);
+        setTimeout(() => {
+            this.refreshLedger();
+          }, 2000);
       })
       .catch((err) => {
         console.log("record delete error: ", err);

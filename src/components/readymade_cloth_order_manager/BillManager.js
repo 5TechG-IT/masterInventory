@@ -50,9 +50,9 @@ export default class BillManager extends Component {
       partyId: 0,
       partyName: null,
       newPartyName: null,
+      receiverName: null,
       address: null,
       mobileNumber: null,
-      vehicleNo: null,
       gstin: null,
       billType: 1,
       code: null,
@@ -105,6 +105,8 @@ export default class BillManager extends Component {
       activePartyId: "",
       activePartyName: "",
       activePartyMobile: "",
+      activePartyAadharNo: "",
+      activePartyCity: "",
       activePartyAddress: "",
       activePartyType: 1,
       partiesData: null,
@@ -125,7 +127,7 @@ export default class BillManager extends Component {
   getIdPartyList() {
     let url = API_URL;
     // const query = `SELECT CONCAT(id, ', ', name) AS name, address FROM party;`;
-    const query = `SELECT id, name, address, mobile FROM party;`;
+    const query = `SELECT id, name, address, mobile FROM party WHERE status=1;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -205,10 +207,10 @@ export default class BillManager extends Component {
     let rate = this.state.productData.find(
       (product) => {
         if (product.id == productId) {
-          return product.unitPrice;
+          return product.price;
         }
       }
-    ).unitPrice
+    ).price
     this.setState(
       {
         rate: rate,
@@ -413,16 +415,16 @@ export default class BillManager extends Component {
     const newDate = moment(new Date()).format("YYYY-MM-DD");
     let query;
     if (this.state.billType === 1) {
-      query = `INSERT INTO gstBill (partyId, date,mobileNo,companyType, vehicleNo, gstin , code, total, advance,  balance, status , last_modified , gst , paid) values("
-        ${this.state.partyId}", 
-        "${newDate}",
-        "${this.state.mobileNumber}",
+      query = `INSERT INTO gstBill (partyId,partyName, receiverName, date, mobileNo,companyType, gstin , code, total, balance, status , last_modified , gst , paid) values(
+        ${this.state.partyId},
+        '${this.state.newPartyName}',  
+        '${this.state.receiverName}', 
+        ${newDate},
+        ${this.state.mobileNumber},
         ${this.state.companyType},
-        "${this.state.vehicleNo}",
-        "${this.state.gstin}", 
-        "${this.state.code}", 
+        '${this.state.gstin}', 
+        ${this.state.code}, 
         ${this.state.grandTotal},
-        ${this.state.advance},
         ${this.state.balance}+${this.state.igst}-${this.state.paid}, 
         1,
         ${newDate},
@@ -431,21 +433,21 @@ export default class BillManager extends Component {
         )`;
       console.log(query)
     } else {
-      query = `INSERT INTO bill (partyId, date,companyType, vehicleNo, gstin , code, total, advance,  balance, discount, status , last_modified , paid) values("
-        ${this.state.partyId}", 
-        "${newDate}",
-        "${this.state.vehicleNo}",
+      query = `INSERT INTO nonGstBill (partyId,partyName, receiverName, date, mobileNo,companyType, code, total, balance, status , last_modified , paid) values(
+        ${this.state.partyId},
+        '${this.state.newPartyName}',  
+        '${this.state.receiverName}', 
+        ${newDate},
+        ${this.state.mobileNumber},
         ${this.state.companyType},
-        "${this.state.gstin}", 
-        "${this.state.code}", 
+        ${this.state.code}, 
         ${this.state.grandTotal},
-        ${this.state.advance}, 
         ${this.state.balance}-${this.state.paid}, 
-        ${this.state.discount}, 
         1,
         ${newDate},
         ${this.state.paid}
         )`;
+        console.log(query)
     }
 
     let data = { crossDomain: true, crossOrigin: true, query: query };
@@ -454,6 +456,7 @@ export default class BillManager extends Component {
       .then((res) => {
         toast.success("Generated Bill successfully");
         this.setState({ billId: res.data.insertId }, this.insertBillList);
+        window.location.reload();
       })
       .catch((err) => {
         toast.error("Failed to Generate Bill ");
@@ -501,7 +504,8 @@ export default class BillManager extends Component {
     e.preventDefault();
     let url = API_URL;
 
-    const query = `INSERT INTO party(name, mobile, address, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAddress}', ${this.state.activePartyType})`;
+    const query = `INSERT INTO party(name, mobile,aadharNo, address,city, type) VALUES('${this.state.activePartyName}', ${this.state.activePartyMobile},'${this.state.activePartyAadharNo}' ,'${this.state.activePartyAddress}','${this.state.activePartyCity}', ${this.state.activePartyType})`;
+    console.log(query)
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -608,6 +612,21 @@ export default class BillManager extends Component {
                       }
                     />
                   </Col>
+                  <Col>
+                    <TextField
+                      id="aadharNo"
+                      label="aadharNo"
+                      variant="outlined"
+                      className="m-2"
+                      defaultValue=""
+                      onChange={(e) =>
+                        this.setState({
+                          activePartyAadharNo:
+                            e.target.value,
+                        })
+                      }
+                    />
+                  </Col>
 
                 </Row>
                 <Row>
@@ -622,6 +641,22 @@ export default class BillManager extends Component {
                       onChange={(e) =>
                         this.setState({
                           activePartyAddress:
+                            e.target.value,
+                        })
+                      }
+                    />
+                  </Col>
+                  <Col>
+                    <TextField
+                      id="city"
+                      s
+                      label="city"
+                      variant="outlined"
+                      className="m-2"
+                      defaultValue=""
+                      onChange={(e) =>
+                        this.setState({
+                          activePartyCity:
                             e.target.value,
                         })
                       }
@@ -656,6 +691,12 @@ export default class BillManager extends Component {
                         </MenuItem>
                         <MenuItem value={2}>
                           Distributor
+                        </MenuItem>
+                        <MenuItem value={3}>
+                          Wholesaler
+                        </MenuItem>
+                        <MenuItem value={4}>
+                          Customer
                         </MenuItem>
                       </Select>
                     </FormControl>
@@ -720,6 +761,18 @@ export default class BillManager extends Component {
           </FormControl>
 
           <TextField
+            id="receiver Name"
+            label="receiver name"
+            variant="outlined"
+            className={"mr-2 mt-1"}
+            value={this.state.receiverName}
+            onChange={(e) => this.setState({ receiverName: e.target.value })}
+            // required="true"
+
+            size="small"
+          />
+
+          <TextField
             id="custAddress"
             label="Address"
             variant="outlined"
@@ -748,27 +801,6 @@ export default class BillManager extends Component {
             size="small"
           />
 
-          <TextField
-            id="adharNo"
-            label="Adhar Number"
-            variant="outlined"
-            className="mr-2 mt-1"
-            value={this.state.adharNO}
-            onChange={(e) => this.setState({ adharNO: e.target.value })}
-            // required="true"
-            size="small"
-          />
-
-          <TextField
-            id="vehicleNo"
-            label="Vehicle Number"
-            variant="outlined"
-            className="mr-2 mt-1"
-            value={this.state.vehicleNo}
-            onChange={(e) => this.setState({ vehicleNo: e.target.value })}
-            // required="true"
-            size="small"
-          />
 
           <ButtonGroup className="mr-2">
             {PaymentMode.map((radio, idx) => (
@@ -1060,9 +1092,9 @@ export default class BillManager extends Component {
             <Col md={8} className="mx-auto">
               <Card className="mt-2 p-0">
                 <Card.Header>
-                  <Card.Title className="text-center pb-0 mb-0">
+                  <h5 className="text-center pb-0 mb-0">
                     <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b>
-                  </Card.Title>
+                  </h5>
                   <hr />
                   <p className="text-center pb-0 mb-0">
                     Gal No. 2134/35, A/p.: Yelavi, Tal. Tasgaon, Dist. Sangli,
@@ -1089,11 +1121,11 @@ export default class BillManager extends Component {
                       Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
                     </p>
                   </span>
-                  <Card.Title className="text-center pb-0 mb-0">
-                    <h5>
+                  
+                    <h5 className="text-center pb-0 mb-0">
                       <b>TAX INVOICE</b>
                     </h5>
-                  </Card.Title>
+                  
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -1107,6 +1139,16 @@ export default class BillManager extends Component {
                         <b>{this.state.partyName || this.state.newPartyName}</b>
                       </h6>
                     </Col>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        Receiver name:{" "}
+                        <b>{this.state.receiverName}</b>
+                      </h6>
+                    </Col>
                   </Row>
                   <Row>
                     <Col md={6}>
@@ -1118,15 +1160,7 @@ export default class BillManager extends Component {
                         Address: <b>{this.state.address}</b>
                       </h6>
                     </Col>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Vehicle No.: <b>{this.state.vehicleNo}</b>
-                      </h6>
-                    </Col>
+                    
                   </Row>
                   <Row>
 

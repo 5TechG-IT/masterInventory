@@ -61,6 +61,7 @@ export default class WholesalerPartyManager extends Component {
             activeWholesalerId: "",
             activeWholesalerName: "",
             activeWholesalerMobile: "",
+            activeWholesalerAadharNo: "",
             activeWholesalerAddress: "",
             activeWholesalerCity: "",
             activeWholesalerType: 3,
@@ -87,7 +88,7 @@ export default class WholesalerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `UPDATE party SET name="${this.state.activeWholesalerName}", mobile="${this.state.activeWholesalerMobile}", address="${this.state.activeWholesalerAddress}", city="${this.state.activeWholesalerCity}", type=${this.state.activeWholesalerType} WHERE id=${this.state.activeWholesalerId};`;
+        const query = `UPDATE party SET name="${this.state.activeWholesalerName}", mobile="${this.state.activeWholesalerMobile}", aadharNo="${this.state.activeWholesalerAadharNo}", address="${this.state.activeWholesalerAddress}", city="${this.state.activeWholesalerCity}", type=${this.state.activeWholesalerType} WHERE id=${this.state.activeWholesalerId};`;
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -97,8 +98,9 @@ export default class WholesalerPartyManager extends Component {
             .post(url, data)
             .then((res) => {
                 toast.success("Party details updated successfully");
-                this.fetchPartiesData();
-            })
+                setTimeout(() => {
+                    this.refreshParties();
+                }, 2000);            })
             .catch((err) => {
                 console.log("error while updating party data", err);
             });
@@ -108,7 +110,7 @@ export default class WholesalerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `INSERT INTO party(name, mobile, address,city, type) VALUES('${this.state.activeWholesalerName}', '${this.state.activeWholesalerMobile}', '${this.state.activeWholesalerAddress}','${this.state.activeWholesalerCity}', ${this.state.activeWholesalerType})`;
+        const query = `INSERT INTO party(name, mobile,aadharNo, address,city, type) VALUES('${this.state.activeWholesalerName}', '${this.state.activeWholesalerMobile}','${this.state.activeWholesalerAadharNo}', '${this.state.activeWholesalerAddress}','${this.state.activeWholesalerCity}', ${this.state.activeWholesalerType})`;
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -121,7 +123,6 @@ export default class WholesalerPartyManager extends Component {
                 setTimeout(() => {
                     this.refreshParties();
                 }, 2000);
-                this.fetchPartiesData();
             })
             .catch((err) => {
                 console.log(err);
@@ -203,6 +204,7 @@ export default class WholesalerPartyManager extends Component {
                     </td>
                     <td align="center">{wholesaler["name"]}</td>
                     <td align="center">{wholesaler["mobile"]}</td>
+                    <td align="center">{wholesaler["aadharNo"]}</td>
                     <td align="center">{wholesaler["address"]}</td>
                     <td align="center">
                         {wholesaler["city"] == null ? 0 : wholesaler["city"]}
@@ -216,6 +218,7 @@ export default class WholesalerPartyManager extends Component {
                                     activeWholesalerId: wholesaler["id"],
                                     activeWholesalerName: wholesaler["name"],
                                     activeWholesalerMobile: wholesaler["mobile"],
+                                    activeWholesalerAadharNo: wholesaler["aadharNo"],
                                     activeWholesalerAddress: wholesaler["address"],
                                     activeWholesalerCity: wholesaler["city"],
                                     activeWholesalerType: wholesaler["type"],
@@ -308,6 +311,23 @@ export default class WholesalerPartyManager extends Component {
                                         }
                                     />
                                 </Col>
+                                <Col>
+                                    <TextField
+                                        id="aadharNo"
+                                        label="aadharNo"
+                                        variant="outlined"
+                                        className="m-2"
+                                        defaultValue={
+                                            this.state.activeWholesalerAadharNo
+                                        }
+                                        onChange={(e) =>
+                                            this.setState({
+                                                activeWholesalerAadharNo:
+                                                    e.target.value,
+                                            })
+                                        }
+                                    />
+                                </Col>
                             </Row>
                             <Row>
                                 <Col>
@@ -375,7 +395,13 @@ export default class WholesalerPartyManager extends Component {
                                                 Retailer
                                             </MenuItem>
                                             <MenuItem value={2}>
-                                                Merchant
+                                                Distributor
+                                            </MenuItem>
+                                            <MenuItem value={3}>
+                                                Wholesaler
+                                            </MenuItem>
+                                            <MenuItem value={4}>
+                                                Customer
                                             </MenuItem>
                                         </Select>
                                     </FormControl>
@@ -480,6 +506,21 @@ export default class WholesalerPartyManager extends Component {
                                                     }
                                                 />
                                             </Col>
+                                            <Col>
+                                                <TextField
+                                                    id="aadharNo"
+                                                    label="aadharNo"
+                                                    variant="outlined"
+                                                    className="m-2"
+                                                    defaultValue=""
+                                                    onChange={(e) =>
+                                                        this.setState({
+                                                            activeWholesalerAadharNo:
+                                                                e.target.value,
+                                                        })
+                                                    }
+                                                />
+                                            </Col>
                                         </Row>
                                         <Row>
                                             <Col>
@@ -529,7 +570,7 @@ export default class WholesalerPartyManager extends Component {
                                                         labelId="demo-simple-select-outlined-label"
                                                         id="demo-simple-select-outlined"
                                                         label="type"
-                                                        defaultValue={1}
+                                                        defaultValue={3}
                                                         onChange={(e) =>
                                                             this.setState({
                                                                 activePWholesalerType:
@@ -538,8 +579,8 @@ export default class WholesalerPartyManager extends Component {
                                                             })
                                                         }
                                                     >
-                                                        <MenuItem value={1}>
-                                                            DistributorPartyManager
+                                                        <MenuItem value={3}>
+                                                            WholesalerPartyManager
                                                         </MenuItem>
                                                     </Select>
                                                 </FormControl>
@@ -576,6 +617,7 @@ export default class WholesalerPartyManager extends Component {
                                                 <th>Wholesaler Id</th>
                                                 <th>Name</th>
                                                 <th>Mobile No</th>
+                                                <th>Aadhar No</th>
                                                 <th>Address</th>
                                                 <th>city</th>
                                                 <th>Options</th>

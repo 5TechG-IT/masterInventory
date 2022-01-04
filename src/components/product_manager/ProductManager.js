@@ -39,13 +39,15 @@ export default class ProductManager extends Component {
             showUpdateModel: false,
             name: "",
             date: moment(new Date()).format("YYYY-MM-DD"),
-            stock: 0,
+            quantity: 0,
             price: 0,
             position: "",
             productData: {},
             activeProductId: null,
             activeStock: null,
             description:"",
+            isLoadingProductData: false,
+            
         };
     }
     getproductData() {
@@ -56,21 +58,23 @@ export default class ProductManager extends Component {
             crossOrigin: true,
             query: query,
         };
+        this.setState({ isLoadingProductData: true });
         axios
             .post(url, data)
             .then((res) => {
                 console.log("product data: ", res.data);
-                this.setState({ productData: res.data });
+                this.setState({ productData: res.data, isLoadingProductData: false  });
                 
             })
             .catch((err) => {
                 console.log(err);
+                this.setState({ isLoadingProductData: false });
             });
     }
 
     handleAddSubmit = () => {
         let url = API_URL;
-        const query = `INSERT INTO products(name,description, stock, unitPrice, position) VALUES('${this.state.name}','${this.state.description}', ${this.state.stock}, ${this.state.unitPrice}, '${this.state.position}')`;
+        const query = `INSERT INTO products(name,description, quantity, price, position) VALUES('${this.state.name}','${this.state.description}', ${this.state.quantity}, ${this.state.price}, '${this.state.position}')`;
         console.log(query)
         let data = {
             crossDomain: true,
@@ -95,7 +99,7 @@ export default class ProductManager extends Component {
 
     handleUpdateSubmit() {
         let url = API_URL;
-        const query = `UPDATE products  SET stock = ${this.state.activeStock}  , name = '${this.state.name}', description = '${this.state.description}' , unitPrice = ${this.state.unitPrice} , position = '${this.state.position}'  WHERE id=${this.state.activeProductId};`;
+        const query = `UPDATE products  SET stock = ${this.state.activeStock}  , name = '${this.state.name}', description = '${this.state.description}' , unitPrice = ${this.state.price} , position = '${this.state.position}'  WHERE id=${this.state.activeProductId};`;
         let data = { crossDomain: true, crossOrigin: true, query: query };
         axios
             .post(url, data)
@@ -325,23 +329,23 @@ export default class ProductManager extends Component {
                                     }
                                 />
                                 <TextField
-                                    id="stock"
-                                    label="Stock"
+                                    id="quantity"
+                                    label="quantity"
                                     variant="outlined"
                                     type="number"
                                     size="small"
                                     style={{maxWidth:100}}
-                                    value={this.state.stock}
+                                    value={this.state.quantity}
                                     className="mr-3"
                                     onChange={(e) =>
                                         this.setState({
-                                            stock: e.target.value,
+                                            quantity: e.target.value,
                                         })
                                     }
                                 />
                                 <TextField
-                                    id="unitPrice"
-                                    label="Unit Price"
+                                    id="price"
+                                    label="price Price"
                                     variant="outlined"
                                     type="number"
                                     size="small"
@@ -382,13 +386,14 @@ export default class ProductManager extends Component {
                     style={{ maxHeight: "74vh" }}
                     className="mt-2"
                 >
+                    {!this.state.isLoadingProductData && (
                     <table id="product_table" className="p-0 m-0 measure1" style={{ width: "100%" }}>
                         <thead>
                             <tr>
                                 <th align="center">UID</th>
                                 <th>Product Code</th>
                                 <th>Product Name/ Description</th>
-                                <th>Stock</th>
+                                <th>Quantity</th>
                                 <th>Unit Price</th>
                                 <th>Position</th>
                                 <th>Last Modified</th>
@@ -415,7 +420,7 @@ export default class ProductManager extends Component {
                                                 {product.name}
                                             </td>
                                             <td>{product.description == null ? "N/A" : product.description}</td>
-                                            <td style={{color: color}}>{product.stock}</td>
+                                            <td style={{color: color}}>{product.quantity}</td>
                                             <td>₹ {product.price}</td>
                                             <td>{product.position}</td>
                                             
@@ -481,6 +486,7 @@ export default class ProductManager extends Component {
                             )}
                         </tbody>
                     </table>
+                     )}
                 </div>
                 <ToastContainer
                     position={toast.POSITION.TOP_RIGHT}
