@@ -51,7 +51,9 @@ export default class NonbillHistory extends Component {
       total: 0,
       vehicleNo: null,
       discount: null,
-
+      receiverName: null,
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      paymentMode: 0,
       itemsList: [],
       isLoadingItems: false,
     };
@@ -59,7 +61,7 @@ export default class NonbillHistory extends Component {
 
   fetchBillList = () => {
     let url = API_URL;
-    const query = `SELECT ngb.*, p.name as pname,mobile,address,companyType,discount FROM bill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC;`;
+    const query = `SELECT ngb.*, p.name as pname,mobile,p.address,companyType,discount FROM nonGstBill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -77,7 +79,7 @@ export default class NonbillHistory extends Component {
 
   fetchBillItemList = () => {
     let url = API_URL;
-    const query = `SELECT bl.* FROM billList as bl inner join bill as ngb on bl.billId=ngb.id where bl.billId= ${this.state.activeBillId}`;
+    const query = `SELECT bl.* FROM billList as bl inner join nonGstBill as ngb on bl.billId=ngb.id where bl.billId= ${this.state.activeBillId}`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -95,7 +97,7 @@ export default class NonbillHistory extends Component {
 
   deleteRecord(id) {
     let url = API_URL;
-    const query = `UPDATE bill SET status = 0  WHERE id=${id};`;
+    const query = `UPDATE nonGstBill SET status = 0  WHERE id=${id};`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -126,7 +128,7 @@ export default class NonbillHistory extends Component {
 
   handleUpdateSubmit(e) {
     let url = API_URL;
-    const query = `UPDATE bill SET balance = balance - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
+    const query = `UPDATE nonGstBill SET balance = total - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
 
     let data = {
       crossDomain: true,
@@ -147,37 +149,37 @@ export default class NonbillHistory extends Component {
   componentDidUpdate() {
     const title = "Party data -" + moment().format("DD-MMMM-YYYY");
     $("#billList").DataTable({
-        destroy: true,
-        keys: true,
-        dom:
-            "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-            "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-            "<'row'<'col-sm-12' tr>>" +
-            "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-        buttons: [
-            // "copy",
-            {
-                extend: "csv",
-                title,
-                messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-                download: "open",
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                },
-            },
-            // "excelBootstrap4",
-            {
-                extend: "print",
-                title,
-                messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-                download: "open",
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                },
-            },
-        ],
+      destroy: true,
+      keys: true,
+      dom:
+        "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+        "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+        "<'row'<'col-sm-12' tr>>" +
+        "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+      buttons: [
+        // "copy",
+        {
+          extend: "csv",
+          title,
+          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+          download: "open",
+          exportOptions: {
+            columns: [0, 1, 2, 3, 4, 5],
+          },
+        },
+        // "excelBootstrap4",
+        {
+          extend: "print",
+          title,
+          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+          download: "open",
+          exportOptions: {
+            columns: [0, 1, 2, 3, 4, 5],
+          },
+        },
+      ],
     });
-}
+  }
 
 
   renderMemoList = () => {
@@ -185,14 +187,14 @@ export default class NonbillHistory extends Component {
 
     // else
     return this.state.billList.map((bill) => {
-      let color = bill.balance > 0 ? 'red' :'';
+      let color = bill.balance > 0 ? 'red' : '';
       return (
         <tr align="center">
           <td>{bill.id}</td>
           <td>{bill.pname}</td>
           <td>{bill.total}</td>
           <td>{bill.paid}</td>
-          <td style={{color: color}}>{bill.balance}</td>
+          <td style={{ color: color }}>{bill.balance}</td>
           <td>{moment(bill.date).format("DD / MM / YYYY")}</td>
           <td className="d-flex justify-content-center">
             &nbsp;
@@ -216,6 +218,8 @@ export default class NonbillHistory extends Component {
                     adjustment: bill.adjustment,
                     vehicleNo: bill.vehicleNo,
                     discount: bill.discount,
+                    receiverName: bill.receiverName,
+                    paymentMode: bill.paymentMode,
                   },
                   this.fetchBillItemList
                 );
@@ -331,18 +335,19 @@ export default class NonbillHistory extends Component {
             <Col className="mx-auto">
               <Card className="p-0">
                 <Card.Header>
-                  <Card.Title className="text-center pb-0 mb-0">
-                  <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b>
-                  </Card.Title>
+                  <h5 className="text-center pb-0 mb-0">
+                    {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
+                    <b>LIBERTY LIGHT HOUSE</b>
+                    <p>Dealers & Wholesalers in Fancy,Commercial & Industrial Lighting</p>
+                  </h5>
                   <hr />
                   <p className="text-center pb-0 mb-0">
-                    Gal No. 2134/35, A/p.: Yelavi, Tal. Tasgaon, Dist. Sangli,
-                    416319 (M.S.)
+                    Sai Hights, Mayani Road, Vita, Tal. Khanapur, Dist. Sangli - 415311
                   </p>
                   <p className="text-center">
-                    Customer Care No. 1234567890
-                    <hr />
-                    email ID: test@gmail.com
+                    Mobile.: 9869377908 / 9821488295 /9892618650
+                    {/* <hr />
+                    email ID: test@gmail.com */}
                   </p>
                   <hr />
 
@@ -357,15 +362,14 @@ export default class NonbillHistory extends Component {
                       Invoice No. <b>{this.state.activeBillId}</b>
                     </p>
                     <p>
-                      Date{" "}
-                      <b>{moment(this.state.date).format("D / M / YYYY")}</b>
+                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
                     </p>
                   </span>
-                  <Card.Title className="text-center pb-0 mb-0">
-                    <h5>
-                      <b>TAX INVOICE</b>
-                    </h5>
-                  </Card.Title>
+
+                  <h5 className="text-center pb-0 mb-0">
+                    <b>TAX INVOICE</b>
+                  </h5>
+
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -375,7 +379,18 @@ export default class NonbillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Party name: <b>{this.state.pname}</b>
+                        Party name:{" "}
+                        <b>{this.state.pname || this.state.newPartyName}</b>
+                      </h6>
+                    </Col>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        Receiver name:{" "}
+                        <b>{this.state.receiverName}</b>
                       </h6>
                     </Col>
                   </Row>
@@ -395,29 +410,11 @@ export default class NonbillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Vehicle No.: <b>{this.state.vehicleNo}</b>
+                        Mobile No: <b>{this.state.mobile}</b>
                       </h6>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                       Mobile No.: <b>{this.state.mobile}</b>
-                      </h6>
-                    </Col>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Adhar No.: <b>JJJJKJBDHBDBBD</b>
-                      </h6>
-                    </Col>
                     <Col md={6}>
                       <h6
                         style={{
@@ -425,20 +422,7 @@ export default class NonbillHistory extends Component {
                         }}
                       >
                         Date:{" "}
-                        <b>
-                          {moment(this.state.date).format("DD / MM / YYYY")}
-                        </b>
-                      </h6>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Code: <b>{this.state.code}</b>
+                        <b>{moment(new Date()).format("DD / MM / YYYY")}</b>
                       </h6>
                     </Col>
                     <Col md={6}>
@@ -450,6 +434,25 @@ export default class NonbillHistory extends Component {
                         Sign:
                       </h6>
                     </Col>
+
+
+                  </Row>
+
+                  <Row>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        Payment Mode:
+                        <b>
+                          {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
+                          
+                        </b>
+                      </h6>
+                    </Col>
+                    
                   </Row>
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
@@ -478,7 +481,7 @@ export default class NonbillHistory extends Component {
                               <td>{item.batch}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>
-                              <td>{this.state.discount}</td> 
+                              <td>{this.state.discount}</td>
                               <td>{item.amount}</td>
                             </tr>
                           );

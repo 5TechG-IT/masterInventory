@@ -9,7 +9,7 @@ import {
     InputLabel,
 } from "@material-ui/core";
 // import { TabContext, TabList, TabPanel } from "@material-ui/lab";
-// import { Row, Col, Card, Badge, Table as Tbl } from "react-bootstrap";
+import { Row, Col, Card, Badge, Table as Tbl } from "react-bootstrap";
 import "./style.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -123,8 +123,14 @@ export class AddNewEntry extends Component {
         return (
             <div className="row">
                 <form autoComplete="off">
-                    <div className="row ml-4 mt-4">
-                        <FormControl
+                    <div className="row ml-4">
+                       
+                        <Card style={{width:'1250px'}}>
+                       
+                    <Card.Body className="mt-0 pt-3">
+                        <div>
+                            <div className="mt-3">
+                            <FormControl
                             variant="filled"
                             className="mr-2 mb-2"
                             style={{ minWidth: "150px" }}
@@ -158,8 +164,7 @@ export class AddNewEntry extends Component {
                                 this.setState({ quantity: e.target.value })
                             }
                         />
-
-                        <TextField
+                                <TextField
                             id="amount"
                             label="amount"
                             variant="outlined"
@@ -170,7 +175,7 @@ export class AddNewEntry extends Component {
                                 this.setState({ amount: e.target.value })
                             }
                         />
-                        <TextField
+                               <TextField
                             id="paid"
                             label="paid"
                             variant="outlined"
@@ -181,8 +186,7 @@ export class AddNewEntry extends Component {
                                 this.setState({ paid: e.target.value })
                             }
                         />
-
-                        <Button
+                                <Button
                             color="primary"
                             variant="contained"
                             className="mb-3"
@@ -190,14 +194,18 @@ export class AddNewEntry extends Component {
                         >
                             <FontAwesomeIcon icon={faPlusCircle} size="2x" />
                         </Button>
-                        {/* <Button
+                        <Button
                             color="secondary"
                             variant="contained"
                             className="mb-3 ml-2"
                             onClick={this.props.refreshLedger}
                         >
                             <FontAwesomeIcon icon={faSyncAlt} size="2x" />
-                        </Button> */}
+                        </Button> 
+                            </div>
+                        </div>
+                    </Card.Body>
+                </Card>
                     </div>
                 </form>
                 <ToastContainer />

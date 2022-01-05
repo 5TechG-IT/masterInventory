@@ -5,3 +5,9 @@
   table.dataTable tbody tr.even {
     background-color: #e8e8e8;
 }
+div#expense_table_wrapper{
+  margin: 5px;
+}
+.MuiGrid-root.MuiGrid-item.MuiGrid-grid-md-2 {
+    margin-bottom: -1em;
+}

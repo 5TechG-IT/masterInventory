@@ -173,12 +173,14 @@ class LedgerManager extends Component {
 
         return ledger.map((record) => {
             // extract date only
+           
             last_modified = moment(record["last_modified"]).format(
                 "D / MM / YYYY HH:MM"
             );
 
             balance =
                 balance + record["total"] + record["debit"] - record["credit"];
+                let color = balance > 0 ? 'red' : '';
             return (
                 <tr>
                     <td align="center">
@@ -188,7 +190,7 @@ class LedgerManager extends Component {
                     <td>{record["total"]}</td>
                     <td>{record["debit"]}</td>
                     <td>{record["credit"]}</td>
-                    <td>{balance}</td>
+                    <td style={{color: color}}>{balance}</td>
                     <td>{last_modified}</td>
                     <td align="center">
                         <Button
@@ -345,7 +347,7 @@ class LedgerManager extends Component {
                         >
                             <table
                                 id="ledger_table"
-                                class="display"
+                                class="display hideScrollbar"
                                 style={{ width: "100%" }}
                             >
                                 <thead>

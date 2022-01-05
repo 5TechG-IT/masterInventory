@@ -58,25 +58,30 @@ export class ExpenseManager extends Component {
       todaysExpense: 0,
       monthlyExpenseData: [],
       dailyExpenseData: [],
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      isLoadingExpense: false,
     };
   }
 
   getExpenseData() {
     let url = API_URL;
-    const query = `SELECT * from expenses order by id DESC;`;
+    const query = `SELECT * from expenses ORDER BY id DESC;`;
     let data = {
       crossDomain: true,
       crossOrigin: true,
       query: query,
     };
+    this.setState({ isLoadingExpense: true });
+
     axios
       .post(url, data)
       .then((res) => {
         console.log("expenses data: ", res.data);
-        this.setState({ expenseData: res.data });
+        this.setState({ expenseData: res.data, isLoadingExpense: false });
       })
       .catch((err) => {
         console.log(err);
+        this.setState({ isLoadingExpense: false });
       });
   }
 
@@ -189,7 +194,8 @@ export class ExpenseManager extends Component {
       .then((res) => {
         toast("Expense added succesfully");
         // this.getExpenseData();
-        this.refreshData();
+        window.location.reload();
+        
       })
       .catch((err) => {
         console.log(err);
@@ -223,7 +229,7 @@ export class ExpenseManager extends Component {
     return (
       <Card className="mb-2">
         <Card.Body className="mt-0 pt-3">
-          <Card.Title>Daily Expense</Card.Title>
+          <h6>Daily Expense</h6>
           <Grid container spacing={1}>
             {this.state.dailyExpenseData.map((record, index) => (
               <Grid item md={2}>
@@ -266,7 +272,7 @@ export class ExpenseManager extends Component {
     return (
       <Card className="mb-2">
         <Card.Body className="mt-0 pt-3">
-          <Card.Title>Monthly Expense</Card.Title>
+          <h6>Monthly Expense</h6>
           <Grid container spacing={1}>
             {this.state.monthlyExpenseData.map((record, index) => (
               <Grid item md={2}>
@@ -300,7 +306,7 @@ export class ExpenseManager extends Component {
         {this.renderMonthlyExpense()}
         <Card>
           <Card.Body className="mt-0 pt-3">
-            <h5>Add Expenses</h5>
+            <h6>Add Expenses</h6>
             <form
               noValidate
               autoComplete="off"
@@ -329,6 +335,16 @@ export class ExpenseManager extends Component {
                     this.setState({ description: e.target.value })
                   }
                 />
+                <TextField
+                  id="date"
+                  label="date"
+                  variant="outlined"
+                  type="date"
+                  size="small"
+                  value={this.state.date}
+                  className="mr-3"
+                  onChange={(e) => this.setState({ date: e.target.value })}
+                />
                 <Button variant="contained" color="primary" type="submit">
                   Add expense
                 </Button>
@@ -336,42 +352,46 @@ export class ExpenseManager extends Component {
             </form>
           </Card.Body>
         </Card>
+        
         <TableContainer
           component={Paper}
           style={{ maxHeight: "74vh" }}
           className="table mt-2"
         >
-          <Table
+           {!this.state.isLoadingExpense && (
+          <table
             stickyHeader
             size="medium"
             aria-label="simple table"
             component={Paper}
+            id="expense_table"
+           
           >
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">Expense Id</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell align="center">Option</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+            <thead>
+              <tr>
+                <td align="center">Expense Id</td>
+                <td>Description</td>
+                <td>Amount</td>
+                <td>Date</td>
+                <td align="center">Option</td>
+              </tr>
+            </thead>
+            <tbody>
               {this.state.expenseData.length > 0 ? (
                 this.state.expenseData.map((expense) => {
                   return (
-                    <TableRow key={expense.id}>
-                      <TableCell align="center">
+                    <tr key={expense.id}>
+                      <td align="center">
                         <Badge variant="primary"> {expense.id}</Badge>
-                      </TableCell>
-                      <TableCell style={{ textTransform: "capitalize" }}>
+                      </td>
+                      <td style={{ textTransform: "capitalize" }}>
                         {expense.description}
-                      </TableCell>
-                      <TableCell>₹ {expense.amount}</TableCell>
-                      <TableCell>
-                        {moment(expense.date).format("D MMMM YYYY h:mm A")}
-                      </TableCell>
-                      <TableCell align="center">
+                      </td>
+                      <td>₹ {expense.amount}</td>
+                      <td>
+                        {moment(expense.date).format("D MMMM YYYY ")}
+                      </td>
+                      <td align="center">
                         <Button
                           color="secondary"
                           variant="contained"
@@ -414,17 +434,18 @@ export class ExpenseManager extends Component {
                             </Button>
                           </Modal.Body>
                         </Modal>
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   );
                 })
               ) : (
-                <TableRow>
-                  <TableCell>No data found</TableCell>
-                </TableRow>
+                <tr>
+                  <td>No data found</td>
+                </tr>
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
+             )}
         </TableContainer>
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
       </div>

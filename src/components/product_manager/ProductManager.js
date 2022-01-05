@@ -99,7 +99,7 @@ export default class ProductManager extends Component {
 
     handleUpdateSubmit() {
         let url = API_URL;
-        const query = `UPDATE products  SET stock = ${this.state.activeStock}  , name = '${this.state.name}', description = '${this.state.description}' , unitPrice = ${this.state.price} , position = '${this.state.position}'  WHERE id=${this.state.activeProductId};`;
+        const query = `UPDATE products  SET quantity = ${this.state.activeStock}  , name = '${this.state.name}', description = '${this.state.description}' , price = ${this.state.unitPrice} , position = '${this.state.position}'  WHERE id=${this.state.activeProductId};`;
         let data = { crossDomain: true, crossOrigin: true, query: query };
         axios
             .post(url, data)
@@ -209,7 +209,7 @@ export default class ProductManager extends Component {
                                 <Col size="12">
                                     <TextField
                                         id="updateStock"
-                                        label="Stock"
+                                        label="Quantity"
                                         variant="outlined"
                                         className="m-2"
                                         defaultValue={this.state.activeStock}
@@ -345,7 +345,7 @@ export default class ProductManager extends Component {
                                 />
                                 <TextField
                                     id="price"
-                                    label="price Price"
+                                    label="price"
                                     variant="outlined"
                                     type="number"
                                     size="small"
@@ -441,9 +441,9 @@ export default class ProductManager extends Component {
                                                             activeProductId:
                                                                 product.id,
                                                             activeStock:
-                                                                product.stock,
+                                                                product.quantity,
                                                             name: product.name,
-                                                            unitPrice: product.unitPrice,
+                                                            unitPrice: product.price,
                                                             position: product.position,   
                                                             description: product.description, 
                                                             showUpdateModal: true,

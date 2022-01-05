@@ -258,7 +258,7 @@ class WorkerManager extends Component {
                 <FontAwesomeIcon icon={faBook} />
               </Button>
             </Link>
-            <Link to={`presentyManager/${worker["id"]}`}>
+            <Link to={`/presentyManager/${worker["id"]}`}>
               <Button
                 className="mx-1"
                 color="primary"
@@ -546,18 +546,7 @@ class WorkerManager extends Component {
         value={this.state.value}
         className="container-fluid border m-0 p-0 main"
       >
-        <AppBar position="static" color="default">
-          <TabList
-            onChange={this.handleTabs}
-            aria-label="simple tabs example"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tab label="Workers" value="1" />
-            {/* <Tab label="Retailers" value="2" />
-            <Tab label="Distributor" value="3" /> */}
-          </TabList>
-        </AppBar>
+       
         <TabPanel value="1" className="m-0 p-0">
           <div className="container-fluid border m-0 p-1">
             <div class="btn-group" role="group" aria-label="Basic example">
@@ -565,6 +554,7 @@ class WorkerManager extends Component {
                 className="mt-1 mr-1 mb-3"
                 color="secondary"
                 variant="contained"
+                size="small"
                 onClick={(e) => {
                   this.setState({ showAddModal: true });
                 }}

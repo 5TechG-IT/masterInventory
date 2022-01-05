@@ -315,7 +315,7 @@ export default class RetailerPartyManager extends Component {
                                 <Col>
                                     <TextField
                                         id="aadharNo"
-                                        label="aadharNo"
+                                        label="Aadhar No"
                                         variant="outlined"
                                         className="m-2"
                                         defaultValue={
@@ -442,6 +442,7 @@ export default class RetailerPartyManager extends Component {
                                 className="mt-1 mr-1 mb-3"
                                 color="secondary"
                                 variant="contained"
+                                size="small"
                                 onClick={(e) => {
                                     this.setState({ showAddModal: true });
                                 }}
@@ -510,7 +511,7 @@ export default class RetailerPartyManager extends Component {
                                             <Col>
                                                 <TextField
                                                     id="aadharNo"
-                                                    label="aadharNo"
+                                                    label="Aadhar No"
                                                     variant="outlined"
                                                     className="m-2"
                                                     defaultValue=""

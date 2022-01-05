@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./dashboard.css";
 // import { AuthContext } from "../../Context/authContext";
-// import { BASE_URL } from "./../common/global.js";
+//API handling components
+import moment from "moment";
+
+import { API_URL } from "./../../global";
 
 // Axios for HTTP req
 const axios = require("axios");
@@ -12,143 +15,155 @@ export default class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            sitesCount:0,
-            machinesCount:0,
-            engineersCount:0,
-            accountantsCount:0,
-            partnersCount:0,
-            creditCount:0,
+            billCount:0,
+            sales:0,
+            expenseCount:0,
+            partyCount:0,
+            gstSales:0,
+            nonGstSales:0,
+            expenseAmount:0,
+            date: moment(new Date()).format("YYYY-MM-DD"),
+
         };
     }
     
 
-    // fetchSitesCount() {
-    //     let url = BASE_URL;
-    //     const query = `SELECT COUNT(id) as siteCount FROM sites WHERE status = 1 AND status = 1;`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+    fetchGstBillsCount() {
+        let url = API_URL;
+        const query = `SELECT COUNT(id) as billCount FROM billList WHERE status = 1 `;
+       
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("sites count: ", res.data);
-    //             this.setState({ sitesCount: res.data[0]["siteCount"] });
-    //         })
-    //         .catch((err) => {
-    //             console.log("siteCount data error: ", err);
-    //         });
-    // }
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("billCount count: ", res.data);
+                this.setState({ billCount: res.data[0]["billCount"] });
+            })
+            .catch((err) => {
+                console.log("billCount data error: ", err);
+            });
+    }
 
-    // fetchMachinesCount() {
-    //     let url = BASE_URL;
+     fetchSalesCount() {
+        let url = API_URL;
+        const query = `SELECT SUM(amount) as sales FROM billList WHERE status = 1`;
+        console.log(query)
+        let data = { crossDomain: true, crossOrigin: true, query: query };
+
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("sales count: ", res.data);
+                this.setState({ sales: res.data[0]["sales"] });
+            })
+            .catch((err) => {
+                console.log("sales data error: ", err);
+            });
+    }
+
+
+
+    fetchExpensesCount() {
+        let url = API_URL;
         
-    //     const query = `SELECT COUNT(id) as machineCount FROM machines WHERE status = 1 AND status = 1;`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+        const query = `SELECT SUM(amount) as expenseCount FROM expenses`;
+       
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("machines count: ", res.data);
-    //             this.setState({ machinesCount: res.data[0]["machineCount"] });
-    //         })
-    //         .catch((err) => {
-    //             console.log("machines data error: ", err);
-    //         });
-    // }
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("expenseCount count: ", res.data);
+                this.setState({ expenseCount: res.data[0]["expenseCount"] });
+            })
+            .catch((err) => {
+                console.log("expenseCount data error: ", err);
+            });
+    }
 
-    // fetchEngineersCount() {
-    //     let url = BASE_URL;
+    fetchPartiesCount() {
+        let url = API_URL;
         
-    //     const query = `SELECT COUNT(id) as engineersCount FROM users WHERE type = 2 AND  status = 1;`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+        const query = `SELECT COUNT(id) as partyCount FROM party WHERE status = 1;`;
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("engineers count: ", res.data);
-    //             this.setState({ engineersCount: res.data[0]["engineersCount"] });
-    //         })
-    //         .catch((err) => {
-    //             console.log("engineers data error: ", err);
-    //         });
-    // }
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("partyCount count: ", res.data);
+                this.setState({ partyCount: res.data[0]["partyCount"] });
+            })
+            .catch((err) => {
+                console.log("partyCount data error: ", err);
+            });
+    }
 
-    // fetchAccountantsCount() {
-    //     let url = BASE_URL;
+   
+    fetchGstSales() {
+        let url = API_URL;
         
-    //     const query = `SELECT COUNT(id) as accountantsCount FROM users WHERE type = 3 AND status = 1;`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+        const query = `SELECT SUM(amount) as gstSales FROM billList WHERE status = 1 AND billType= 1`;
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("accountants count: ", res.data);
-    //             this.setState({ accountantsCount: res.data[0]["accountantsCount"] });
-    //         })
-    //         .catch((err) => {
-    //             console.log("accountants data error: ", err);
-    //         });
-    // }
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("gstSales count: ", res.data);
+                this.setState({ gstSales: res.data[0]["gstSales"] });                
+            })
+            .catch((err) => {
+                console.log("gstSales data error: ", err);
+            });
+    }
 
-    // fetchPartnersCount() {
-    //     let url = BASE_URL;
+    fetchnonGstSales() {
+        let url = API_URL;
         
-    //     const query = `SELECT COUNT(id) as partnersCount FROM users WHERE type = 4 AND status = 1 ;`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+        const query = `SELECT SUM(amount) as nonGstSales FROM billList WHERE status = 1 AND billType= 2`;
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("partners count: ", res.data);
-    //             this.setState({ partnersCount: res.data[0]["partnersCount"] });                
-    //         })
-    //         .catch((err) => {
-    //             console.log("partners data error: ", err);
-    //         });
-    // }
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("nonGstSales count: ", res.data);
+                this.setState({ nonGstSales: res.data[0]["nonGstSales"] });                
+            })
+            .catch((err) => {
+                console.log("nonGstSales data error: ", err);
+            });
+    }
 
-    // fetchDebitCount() {
-    //     let url = BASE_URL;
-        
-    //     const query = `SELECT SUM(debit) as debitCount FROM finance WHERE  status = 1`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("debit count: ", res.data);
-    //             this.setState({ debitCount: res.data[0]["debitCount"] });                
-    //         })
-    //         .catch((err) => {
-    //             console.log("debit data error: ", err);
-    //         });
-    // }
+    fetchExpenseAmountCount() {
+        let url = API_URL;
+        const date = new Date();
+        const query = `SELECT YEAR(date) as year, MONTH(date) as month, DAY(date) as day, SUM(amount) as amount FROM expenses 
+        GROUP BY day 
+        HAVING year=${date.getFullYear()} and month=${date.getMonth() + 1}
+        ORDER BY day DESC LIMIT 6;`;
+        let data = { crossDomain: true, crossOrigin: true, query: query };
 
-    // fetchCreditCount() {
-    //     let url = BASE_URL;
-        
-    //     const query = `SELECT SUM(credit) as creditCount FROM finance WHERE  status = 1`;
-    //     let data = { crossDomain: true, crossOrigin: true, query: query };
+        axios
+            .post(url, data)
+            .then((res) => {
+                console.log("expenseAmount count: ", res.data);
+                this.setState({ expenseAmount: res.data[0]["amount"] });                
+            })
+            .catch((err) => {
+                console.log("expenseAmount data error: ", err);
+            });
+    }
 
-    //     axios
-    //         .post(url, data)
-    //         .then((res) => {
-    //             console.log("credit count: ", res.data);
-    //             this.setState({ creditCount: res.data[0]["creditCount"] });                
-    //         })
-    //         .catch((err) => {
-    //             console.log("credit data error: ", err);
-    //         });
-    // }
-
-    // componentDidMount() {
-    //     this.fetchSitesCount();
-    //     this.fetchMachinesCount();
-    //     this.fetchEngineersCount();
-    //     this.fetchAccountantsCount();
-    //     this.fetchPartnersCount();
-    //     this.fetchCreditCount();
-    //     this.fetchDebitCount();
-    // }
+    componentDidMount() {
+        this.fetchGstBillsCount();
+        this.fetchExpensesCount();
+        this.fetchPartiesCount();
+        this.fetchSalesCount();
+        this.fetchGstSales();
+        this.fetchnonGstSales();
+        this.fetchExpenseAmountCount();
+    }
     render() {
         return (
             <>
@@ -176,9 +191,9 @@ export default class Dashboard extends Component {
                                         {/* small box */}
                                         <div className="small-box bg-info">
                                             <div className="inner">
-                                                <h3>Total Sites<h1 className="small-box-footer" style={{float:'right',fontSize:'55px'}}>{this.state.sitesCount}</h1></h3>
+                                                <h3>Total Bills</h3>
                                                 
-                                                <p>(Active)</p>
+                                                <h2>{this.state.billCount}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -187,19 +202,18 @@ export default class Dashboard extends Component {
                                         {/* small box */}
                                         <div className="small-box bg-success">
                                             <div className="inner">
-                                                <h3>
-                                                    Total engineers
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.engineersCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <p>Bounce Rate</p>
+                                            <h3>Total Sale</h3>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.sales}</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/* ./col */}
+                                    <div className="col-lg-3 col-6">
+                                        {/* small box */}
+                                        <div className="small-box bg-danger">
+                                            <div className="inner">
+                                            <h3>Total Expenses</h3>
+                                            <h2><i class="fas fa-rupee-sign"></i> {this.state.expenseCount}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -208,62 +222,8 @@ export default class Dashboard extends Component {
                                         {/* small box */}
                                         <div className="small-box bg-warning">
                                             <div className="inner">
-                                                <h3>
-                                                    Total machines
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.machinesCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <p>User Registrations</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* ./col */}
-                                    <div className="col-lg-3 col-6">
-                                        {/* small box */}
-                                        <div className="small-box bg-danger">
-                                            <div className="inner">
-                                                <h3>
-                                                    Total accountants
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.accountantsCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <p>Unique Visitors</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* ./col */}
-                                    {/* ./col */}
-                                    <div className="col-lg-3 col-6">
-                                        {/* small box */}
-                                        <div className="small-box bg-danger">
-                                            <div className="inner">
-                                                <h3>
-                                                    Total partners
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.partnersCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <p>Unique Visitors</p>
+                                            <h3>Total Parties</h3>
+                                            <h2>{this.state.partyCount}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -289,45 +249,30 @@ export default class Dashboard extends Component {
                                 <div className="row">
                                     <div className="col-lg-3 col-6">
                                         {/* small box */}
-                                        <div className="small-box bg-info">
-                                            <div className="inner text-center">
-                                                <h3>
-                                                    Total{" "}
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.debitCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <h3>debit</h3>
+                                        <div className="small-box bg-warning">
+                                            <div className="inner">
+                                            <h3>GST Sale</h3>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.gstSales}</h2>
                                             </div>
-                                            
                                         </div>
                                     </div>
                                     {/* ./col */}
                                     <div className="col-lg-3 col-6">
                                         {/* small box */}
-                                        <div className="small-box bg-success">
-                                            <div className="inner text-center">
-                                                <h3>
-                                                    Total{" "}
-                                                    <h1
-                                                        className="small-box-footer"
-                                                        style={{
-                                                            float: "right",
-                                                            fontSize: "55px",
-                                                        }}
-                                                    >
-                                                        {this.state.creditCount}{" "}
-                                                    </h1>
-                                                </h3>
-                                                <h3>credit</h3>
+                                        <div className="small-box bg-danger">
+                                            <div className="inner">
+                                            <h3>NON GST Sale</h3>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.nonGstSales}</h2>
                                             </div>
-                                            
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-3 col-6">
+                                        {/* small box */}
+                                        <div className="small-box bg-primary">
+                                            <div className="inner">
+                                            <h3>Expense Amount</h3>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.expenseAmount}</h2>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -20,6 +20,7 @@ import LedgerManager from "../ledger_manager/LedgerManager";
 import WorkerManager from "../worker_manager/WorkerManager";
 import StockManager from "../stock_manager/StockManager";
 import Dashboard from "../dashboard/Dashboarrd";
+import PresentyManager from "../presenty_manager/PresentyManager";
 
 function Main(props) {
 	  // const [authenticated, setAuthenticated] = useState(props.location.state);
@@ -33,7 +34,7 @@ function Main(props) {
 
 	if (auth && auth.isAuthenticated) {
 		//const { userName } = authenticated;
-		const  userName  = "user1";
+		const  userName  = auth.userName;
 		return (
 			<Router>
 				<Navbar bg="dark" expand="lg">
@@ -60,6 +61,7 @@ function Main(props) {
 								<Route path="/workerManager" exact component={WorkerManager} />
 								<Route path="/stockManager" exact component={StockManager} />
 								<Route path="/dashboard" exact component={Dashboard} />
+								<Route path="/presentyManager/:workerId" exact component={PresentyManager} />
 
 
 							

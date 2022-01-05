@@ -1,3 +1,10 @@
 .main {
 	min-height: 92vh;
 }
+.modal-open .modal { outline: none; }
+.modal-content {
+	box-shadow: none;
+}
+.container-fluid.border.m-0.p-1 {
+	background-color: aliceblue;
+}

@@ -3,16 +3,26 @@ import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import { Row, Col, Card, Button, Badge } from "react-bootstrap";
 import "./style.css";
+import { useContex,useState } from "react";
+
 import Statistics from "./Statistics";
 
 function NavbarPanel(props) {
 	const handleLogout = () => {
 		props.logout();
-	  };
-	  
+	};
+
+	// const [userName, setUserName] = useState(
+	// 	localStorage.getItem("userName") != "null"
+	// 		? String(localStorage.getItem("userName"))
+	// 		: false
+	// );
+	// console.log(userName)
+
+	
 	return (
 		<div className="container-fluid  main-navbar">
-			 <div>
+			<div>
 				<Card className="mb-2">
 					<Card.Body className="p-2 profile-body">
 						<Avatar className="profile">
@@ -45,6 +55,11 @@ function NavbarPanel(props) {
 								Product manager
 							</Button>
 						</Link>
+						<Link to="/stockManager">
+							<Button variant="primary" size="sm" block className="mb-2">
+								Stock manager
+							</Button>
+						</Link>
 						<Link to="/expenseManager">
 							<Button variant="primary" size="sm" block className="mb-2">
 								Expense manager
@@ -60,18 +75,14 @@ function NavbarPanel(props) {
 								Worker manager
 							</Button>
 						</Link>
-						<Link to="/stockManager">
-							<Button variant="primary" size="sm" block className="mb-2">
-								Stock manager
-							</Button>
-						</Link>
-						
+					
+
 						{/* <Link to="/partyManager">
 							<Button variant="primary" size="sm" block className="mb-2">
 								Setting
 							</Button>
 						</Link> */}
-						
+
 					</Card.Body>
 				</Card>
 				{/* <Card className="m-0 p-1">
@@ -91,7 +102,7 @@ function NavbarPanel(props) {
 						Logout
 					</Button>
 				</Col>
-			</Row>	
+			</Row>
 		</div>
 
 

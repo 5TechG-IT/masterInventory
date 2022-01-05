@@ -31,7 +31,7 @@ import NonGstBillHistory from "./NonGstBillHistory";
 import GstBillHistory from "./GstBillHistory";
 
 function OrderManager() {
-    const [value, setValue] = React.useState(null);
+    const [value, setValue] = React.useState("1");
 
     const handleTabs = (event, newValue) => {
         setValue(newValue);
@@ -50,7 +50,7 @@ function OrderManager() {
                     textColor="primary"
                     
                 >
-                    <Tab  label="New Bill" value="1" />
+                    <Tab  label="New Bill" active value="1" />
                     <Tab label="Bill History (GST)" value="2" />
                     <Tab label="Bill History (Non GST)" value="3" />
                 </TabList>

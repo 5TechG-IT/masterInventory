@@ -38,7 +38,7 @@ export default class GstBillHistory extends Component {
       activePaid: 0,
       discount: null,
 
-      
+
       adjustment: 0,
       balance: 0,
       code: null,
@@ -49,9 +49,10 @@ export default class GstBillHistory extends Component {
       total: 0,
       gst: 0,
       vehicleNo: null,
-      companyType : 1,
+      companyType: 1,
       mobileNo: 0,
-
+      paymentMode: 0,
+      receiverName: null,
       itemsList: [],
       isLoadingItems: false,
     };
@@ -59,7 +60,7 @@ export default class GstBillHistory extends Component {
 
   fetchBillList = () => {
     let url = API_URL;
-    const query = `SELECT ngb.*, p.name as pname,mobile,address,companyType,discount FROM gstBill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC;`;
+    const query = `SELECT ngb.*, p.name as pname,mobile,p.address,companyType,discount FROM gstBill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC;`;
     console.log(query)
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
@@ -126,8 +127,8 @@ export default class GstBillHistory extends Component {
 
   handleUpdateSubmit(e) {
     let url = API_URL;
-    const query = `UPDATE gstBill SET balance = balance - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
-
+    const query = `UPDATE gstBill SET balance = total - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
+    console.log(query)
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -147,51 +148,51 @@ export default class GstBillHistory extends Component {
   componentDidUpdate() {
     const title = "Party data -" + moment().format("DD-MMMM-YYYY");
     $("#billList").DataTable({
-        destroy: true,
-        keys: true,
-        dom:
-            "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-            "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-            "<'row'<'col-sm-12' tr>>" +
-            "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-        buttons: [
-            // "copy",
-            {
-                extend: "csv",
-                title,
-                messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-                download: "open",
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                },
-            },
-            // "excelBootstrap4",
-            {
-                extend: "print",
-                title,
-                messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-                download: "open",
-                exportOptions: {
-                    columns: [ 0, 1, 2, 3, 4, 5 ],
-                },
-            },
-        ],
+      destroy: true,
+      keys: true,
+      dom:
+        "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+        "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+        "<'row'<'col-sm-12' tr>>" +
+        "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+      buttons: [
+        // "copy",
+        {
+          extend: "csv",
+          title,
+          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+          download: "open",
+          exportOptions: {
+            columns: [0, 1, 2, 3, 4, 5],
+          },
+        },
+        // "excelBootstrap4",
+        {
+          extend: "print",
+          title,
+          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+          download: "open",
+          exportOptions: {
+            columns: [0, 1, 2, 3, 4, 5],
+          },
+        },
+      ],
     });
-}
+  }
 
   renderMemoList = () => {
     if (this.state.billList == null) return null;
 
     // else
     return this.state.billList.map((bill) => {
-      let color = bill.balance > 0 ? 'red' :'';
+      let color = bill.balance > 0 ? 'red' : '';
       return (
         <tr align="center">
           <td>{bill.id}</td>
           <td>{bill.pname}</td>
           <td>{bill.total}</td>
           <td>{bill.paid}</td>
-          <td style={{color: color}}>{bill.balance}</td>
+          <td style={{ color: color }}>{bill.balance}</td>
           <td>{moment(bill.date).format("DD / MM / YYYY")}</td>
           <td className="d-flex justify-content-center">
             &nbsp;
@@ -204,7 +205,7 @@ export default class GstBillHistory extends Component {
                   {
                     activeBillId: bill.id,
                     showDisplayBillModal: true,
-                  
+
                     code: bill.code,
                     date: bill.date,
                     pname: bill.pname,
@@ -217,7 +218,9 @@ export default class GstBillHistory extends Component {
                     vehicleNo: bill.vehicleNo,
                     mobileNo: bill.mobileNo,
                     gst: bill.gst,
-                    discount: bill.discount
+                    discount: bill.discount,
+                    paymentMode: bill.paymentMode,
+                    receiverName: bill.receiverName,
                   },
                   this.fetchBillItemList
                 );
@@ -333,18 +336,19 @@ export default class GstBillHistory extends Component {
             <Col className="mx-auto">
               <Card className="p-0">
                 <Card.Header>
-                  <Card.Title className="text-center pb-0 mb-0">
-                    <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b>
-                  </Card.Title>
+                  <h5 className="text-center pb-0 mb-0">
+                    {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
+                    <b>LIBERTY LIGHT HOUSE</b>
+                    <p>Dealers & Wholesalers in Fancy,Commercial & Industrial Lighting</p>
+                  </h5>
                   <hr />
                   <p className="text-center pb-0 mb-0">
-                    Gal No. 2134/35, A/p.: Yelavi, Tal. Tasgaon, Dist. Sangli,
-                    416319 (M.S.)
+                    Sai Hights, Mayani Road, Vita, Tal. Khanapur, Dist. Sangli - 415311
                   </p>
                   <p className="text-center">
-                    Customer Care No. 1234567890
-                    <hr />
-                    email ID: test@gmail.com
+                    Mobile.: 9869377908 / 9821488295 /9892618650
+                    {/* <hr />
+                    email ID: test@gmail.com */}
                   </p>
                   <hr />
 
@@ -359,15 +363,14 @@ export default class GstBillHistory extends Component {
                       Invoice No. <b>{this.state.activeBillId}</b>
                     </p>
                     <p>
-                      Date{" "}
-                      <b>{moment(this.state.date).format("D / M / YYYY")}</b>
+                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
                     </p>
                   </span>
-                  <Card.Title className="text-center pb-0 mb-0">
-                    <h5>
-                      <b>TAX INVOICE</b>
-                    </h5>
-                  </Card.Title>
+
+                  <h5 className="text-center pb-0 mb-0">
+                    <b>TAX INVOICE</b>
+                  </h5>
+
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -377,7 +380,18 @@ export default class GstBillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Party name: <b>{this.state.pname}</b>
+                        Party name:{" "}
+                        <b>{this.state.pname || this.state.newPartyName}</b>
+                      </h6>
+                    </Col>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        Receiver name:{" "}
+                        <b>{this.state.receiverName}</b>
                       </h6>
                     </Col>
                   </Row>
@@ -397,29 +411,11 @@ export default class GstBillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Vehicle No.: <b>{this.state.vehicleNo}</b>
+                        Mobile No: <b>{this.state.mobileNo}</b>
                       </h6>
                     </Col>
                   </Row>
                   <Row>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Mobile No.: <b>{this.state.mobileNo}</b>
-                      </h6>
-                    </Col>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Adhar No.: <b>JJJJKJBDHBDBBD</b>
-                      </h6>
-                    </Col>
                     <Col md={6}>
                       <h6
                         style={{
@@ -427,13 +423,9 @@ export default class GstBillHistory extends Component {
                         }}
                       >
                         Date:{" "}
-                        <b>
-                          {moment(this.state.date).format("DD / MM / YYYY")}
-                        </b>
+                        <b>{moment(new Date()).format("DD / MM / YYYY")}</b>
                       </h6>
                     </Col>
-                  </Row>
-                  <Row>
                     <Col md={6}>
                       <h6
                         style={{
@@ -442,13 +434,18 @@ export default class GstBillHistory extends Component {
                       >
                         GSTIN: <b>{this.state.gstin}</b>
                       </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Code: <b>{this.state.code}</b>
-                      </h6>
+                    </Col>
+
+
+                  </Row>
+
+                  <Row>
+                    <Col md={6}>
+                      <p>
+                        <b>
+                        Payment Mode: {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
+                        </b>
+                      </p>
                     </Col>
                     <Col md={6}>
                       <h6
@@ -465,7 +462,7 @@ export default class GstBillHistory extends Component {
                   {/* Order overview */}
                   <Tbl striped bordered hover size="sm">
                     <thead>
-                    <tr>
+                      <tr>
                         <th>Particular</th>
                         <th>Description</th>
                         <th>Batch</th>
@@ -473,7 +470,7 @@ export default class GstBillHistory extends Component {
                         <th>Rate</th>
                         <th>Discount %</th>
                         <th>Total</th>
-                       
+
                       </tr>
                     </thead>
                     {this.state.itemsList.length > 0 ? (
@@ -490,35 +487,35 @@ export default class GstBillHistory extends Component {
                             //   <td>{item.amount}</td>
                             // </tr>
                             <tr key={"" + item.particular}>
-                            <td>{item.particular} </td>
-                            <td>{item.description}</td>
-                            <td>{item.batch}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.rate}</td>
-                            <td>{this.state.discount}</td>
-                            <td>{item.amount}</td>
-                            
-                          </tr>
+                              <td>{item.particular} </td>
+                              <td>{item.description}</td>
+                              <td>{item.batch}</td>
+                              <td>{item.quantity}</td>
+                              <td>{item.rate}</td>
+                              <td>{item.discount}</td>
+                              <td>{item.amount}</td>
+
+                            </tr>
                           );
                         })}
                         <br></br>
-                            <tr>
-                              <td colSpan="4">Total amount before tax</td>
-                              <td></td>
-                              <td></td>
-                              <td colSpan="2">{this.state.total}</td>
-                            </tr>
-                            <tr>
-                              <td colSpan="4">IGST 18%</td>
-                              <td></td>
-                              <td></td>
-                              <td colSpan="2">{this.state.gst}</td>
-                            </tr>
-                       
+                        <tr>
+                          <td colSpan="4">Total amount before tax</td>
+                          <td></td>
+                          <td></td>
+                          <td colSpan="2">{this.state.total}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan="4">IGST 18%</td>
+                          <td></td>
+                          <td></td>
+                          <td colSpan="2">{this.state.gst}</td>
+                        </tr>
+
                         <tr>
                           <td colSpan="4">Grand Total</td>
                           <td></td>
-                              <td></td>
+                          <td></td>
                           <td colSpan="2">{this.state.total}</td>
                         </tr>
                       </tbody>
@@ -603,7 +600,7 @@ export default class GstBillHistory extends Component {
                     <th align="center">Balance</th>
                     <th align="center">Date</th>
                     <th align="center">Actions</th>
-                    
+
                   </tr>
                 </thead>
                 <tbody>{this.renderMemoList()}</tbody>

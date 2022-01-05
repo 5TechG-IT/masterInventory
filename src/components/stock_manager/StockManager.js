@@ -128,7 +128,9 @@ export default class StockManager extends Component {
       .post(url, data)
       .then((res) => {
         toast.success("Record details updated successfully");
-        this.fetchLedgerData();
+        setTimeout(() => {
+          this.refreshLedger();
+        }, 2000);
       })
       .catch((err) => {
         console.log(err);
@@ -219,12 +221,14 @@ export default class StockManager extends Component {
     let last_modified = null;
 
     return ledger.map((record) => {
+      let color = record.pending > 0 ? 'red' : '';
       // extract date only
       last_modified = moment(record["last_modified"]).format(
         "DD/MM/YYYY HH:MM"
       );
-
+      
       return (
+        
         <tr>
           <td align="center">
             <Badge variant="primary">
@@ -238,7 +242,7 @@ export default class StockManager extends Component {
           <td>{record["quantity"]}</td>
           <td>{record["amount"]}</td>
           <td>{record["paid"]}</td>
-          <td>{record["pending"]}</td>
+          <td style={{color: color}}>{record["pending"]}</td>
           <td>{last_modified}</td>
           <td align="center">
             <Button
