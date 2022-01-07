@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactToPrint from "react-to-print";
 import moment from "moment";
+// import libarty from "../../img/libarty.png";
+
 import { Row, Col, Card, Button as Btn1, Modal, Badge, Table as Tbl } from "react-bootstrap";
 import {
   faPenAlt,
@@ -58,6 +60,7 @@ export default class BillManager extends Component {
       code: null,
       companyType: 1,
       discount: null,
+      vehicleNo: "",
 
       PaymentMode: [],
       priceMode: 1,
@@ -417,13 +420,13 @@ export default class BillManager extends Component {
     const date = moment(new Date()).format("YYYY-MM-DD");
     let query;
     if (this.state.billType === 1) {
-      query = `INSERT INTO gstBill (partyId,partyName, receiverName, date, mobileNo,companyType, gstin , code, total, balance, status , last_modified , gst , paid,paymentMode) values(
+      query = `INSERT INTO gstBill (partyId,partyName, receiverName, date, mobileNo, companyType, gstin , code, total, balance, status , last_modified , gst , paid,paymentMode) values(
         ${this.state.partyId},
         '${this.state.newPartyName}',  
         '${this.state.receiverName}', 
         '${moment(
-          date
-        ).format()}',
+        date
+      ).format()}',
         ${this.state.mobileNumber},
         ${this.state.companyType},
         '${this.state.gstin}', 
@@ -432,21 +435,21 @@ export default class BillManager extends Component {
         ${this.state.balance}+${this.state.igst}-${this.state.paid}, 
         1,
         '${moment(
-          date
-        ).format()}',
+        date
+      ).format()}',
         ${this.state.igst},
         ${this.state.paid},
         ${this.state.priceMode}
         )`;
       console.log(query)
     } else {
-      query = `INSERT INTO nonGstBill (partyId,partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid,paymentMode) values(
+      query = `INSERT INTO nonGstBill (partyId, partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid, paymentMode) values(
         ${this.state.partyId},
         '${this.state.newPartyName}',  
         '${this.state.receiverName}', 
         '${moment(
-          date
-        ).format()}',
+        date
+      ).format()}',
         ${this.state.mobileNumber},
         ${this.state.companyType},
         ${this.state.code}, 
@@ -455,8 +458,8 @@ export default class BillManager extends Component {
         ${this.state.balance}-${this.state.paid}, 
         1,
         '${moment(
-          date
-        ).format()}',
+        date
+      ).format()}',
         ${this.state.paid},
         ${this.state.priceMode}
         )`;
@@ -830,6 +833,7 @@ export default class BillManager extends Component {
               </ToggleButton>
             ))}
           </ButtonGroup>
+            
 
           <TextField
             id="mobileNo"
@@ -917,7 +921,7 @@ export default class BillManager extends Component {
             id="paid"
             label="Paid"
             variant="outlined"
-            className="mr-2 mt-1"
+            className="mr-2 mt-1 mb-3"
             value={this.state.paid}
             onChange={(e) => this.setState({ paid: e.target.value })}
             // required="true"
@@ -1104,41 +1108,54 @@ export default class BillManager extends Component {
             <Col md={8} className="mx-auto">
               <Card className="mt-2 p-0">
                 <Card.Header>
-                  <h5 className="text-center pb-0 mb-0">
-                    {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
-                    <b>LIBERTY LIGHT HOUSE</b>
-                    <p>Dealers & Wholesalers in Fancy,Commercial & Industrial Lighting</p>
-                  </h5>
-                  <hr />
-                  <p className="text-center pb-0 mb-0">
-                    Sai Hights, Mayani Road, Vita, Tal. Khanapur, Dist. Sangli - 415311
-                  </p>
-                  <p className="text-center">
-                    Mobile.: 9869377908 / 9821488295 /9892618650
-                    {/* <hr />
-                    email ID: test@gmail.com */}
-                  </p>
-                  <hr />
+                  <div className="row">
+                    <div className="col-2 col-md-2 text-center">
+                      <img
+                        style={{marginLeft:'-1.5em'}}
+                        src="/Assets/patil.png"
+                        height="200"
+                        width="200"
+                      />
+                    </div>
+                    <div className="col-10">
+                      <h5 className="text-center pb-0 mb-0">
+                        {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
+                        <h2><b>पाटील ऑटोमोबाईल्स</b></h2>
+                        <p>सेल्स । स्पेअर्स । सर्विस </p>
+                      </h5>
+                      <hr />
+                      <p className="text-center pb-0 mb-0">
+                      क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली . 
+                      </p>
+                      <p className="text-center">
+                      भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
+                              {/* <hr />
+                          email ID: test@gmail.com */}
+                      </p>
+                    </div>
+                    </div>
+                    <hr />
 
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <p>
-                      Invoice No. <b>{this.state.newId}</b>
-                    </p>
-                    <p>
-                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
-                    </p>
-                  </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <p>
+                        Invoice No. <b>{this.state.newId}</b>
+                      </p>
+                      <p>
+                        Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
+                      </p>
+                    </span>
 
-                  <h5 className="text-center pb-0 mb-0">
-                    <b>TAX INVOICE</b>
-                  </h5>
+                    <h5 className="text-center pb-0 mb-0">
+                      <b>TAX INVOICE</b>
+                    </h5>
 
+                  
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -1170,7 +1187,9 @@ export default class BillManager extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Address: <b>{this.state.address}</b>
+                        Address:{" "}
+                        <b>{this.state.address || this.state.activePartyAddress}</b>
+                        {/* Address: <b>{this.state.Address}</b> */}
                       </h6>
                     </Col>
                     <Col md={6}>
@@ -1227,6 +1246,18 @@ export default class BillManager extends Component {
                       </h6>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        
+                        Vehicle No: <b>{this.state.vehicleNo}</b>
+                      </h6>
+                    </Col>
+                  </Row>
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
                   {/* Order overview */}
@@ -1276,35 +1307,35 @@ export default class BillManager extends Component {
                               <td colSpan="4">Total amount before tax</td>
                               <td></td>
                               <td></td>
-                             
+
                               <td colSpan="2">{this.state.total}</td>
                             </tr>
                             <tr>
                               <td colSpan="4">Total amount after discount</td>
                               <td></td>
                               <td></td>
-                           
+
                               <td colSpan="2">{this.state.discountAmount}</td>
                             </tr>
                             <tr>
                               <td colSpan="4">SGST 9%</td>
                               <td></td>
                               <td></td>
-                             
+
                               <td colSpan="2">{this.state.sgst}</td>
                             </tr>
                             <tr>
                               <td colSpan="4">CGST 9%</td>
                               <td></td>
                               <td></td>
-                             
+
                               <td colSpan="2">{this.state.cgst}</td>
                             </tr>
                             <tr>
                               <td colSpan="4">IGST 18%</td>
                               <td></td>
                               <td></td>
-                              
+
                               <td colSpan="2">{this.state.igst}</td>
                             </tr>
                           </>
@@ -1313,7 +1344,7 @@ export default class BillManager extends Component {
                             <td colSpan="4">Total amount</td>
                             <td></td>
                             <td></td>
-                            
+
                             <td colSpan="2">{this.state.total}</td>
                           </tr>
 
@@ -1323,7 +1354,7 @@ export default class BillManager extends Component {
                           <td colSpan="4">Grand Total</td>
                           <td></td>
                           <td></td>
-                         
+
                           <td colSpan="2">{this.state.grandTotal}</td>
                         </tr>
                       </tbody>
@@ -1331,12 +1362,14 @@ export default class BillManager extends Component {
                       <tbody>
                         <tr>
                           <td colSpan="6">No items added</td>
+                          <td></td>
+                          <td></td>
                         </tr>
                       </tbody>
                     )}
                   </Tbl>
                 </Card.Body>
-                <Card.Footer className="pb-3 mb-0">
+                {/* <Card.Footer className="pb-3 mb-0">
                   <Row>
                     <Col md={4}>
                       <h6
@@ -1386,7 +1419,7 @@ export default class BillManager extends Component {
                       </h6>
                     </Col>
                   </Row>
-                </Card.Footer>
+                </Card.Footer> */}
               </Card>
             </Col>
           </Row>

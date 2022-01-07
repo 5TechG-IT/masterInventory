@@ -1,0 +1,19 @@
+.main {
+  min-height: 92vh;
+}
+
+.monthly-calender-root {
+  width: max-content;
+  display: grid;
+  grid-template-columns: repeat(7, 3rem);
+  grid-template-rows: auto repeat(6, 3rem);
+  grid-gap: 10px;
+}
+
+.monthly-calender-day {
+  height: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

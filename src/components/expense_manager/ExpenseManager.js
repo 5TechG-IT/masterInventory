@@ -182,7 +182,8 @@ export class ExpenseManager extends Component {
     const date = new Date();
     const query = `INSERT INTO expenses (description,date,amount) VALUES('${description}','${moment(
       date
-    ).format()}',${amount});`;
+    ).format()}',
+    ${amount});`;
 
     let data = {
       crossDomain: true,
@@ -215,7 +216,11 @@ export class ExpenseManager extends Component {
       .post(url, data)
       .then((res) => {
         toast.success("expense deleted successfully");
+      
+        window.location.reload();
         this.getExpenseData();
+
+       
       })
       .catch((err) => {
         console.log(err);
@@ -353,11 +358,7 @@ export class ExpenseManager extends Component {
           </Card.Body>
         </Card>
         
-        <TableContainer
-          component={Paper}
-          style={{ maxHeight: "74vh" }}
-          className="table mt-2"
-        >
+      
            {!this.state.isLoadingExpense && (
           <table
             stickyHeader
@@ -438,15 +439,11 @@ export class ExpenseManager extends Component {
                     </tr>
                   );
                 })
-              ) : (
-                <tr>
-                  <td>No data found</td>
-                </tr>
-              )}
+              ) : ""}
             </tbody>
           </table>
              )}
-        </TableContainer>
+        {/* </TableContainer> */}
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
       </div>
     );

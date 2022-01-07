@@ -1,0 +1,6 @@
+.main {
+	min-height: 92vh;
+}
+table.dataTable tbody tr.even {
+    background-color: #e8e8e8;
+}

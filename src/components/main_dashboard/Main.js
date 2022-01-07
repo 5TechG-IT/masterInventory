@@ -39,7 +39,7 @@ function Main(props) {
 			<Router>
 				<Navbar bg="dark" expand="lg">
 					<Navbar.Brand id="title" href="#home">
-						LIBERTY LIGHT HOUSE
+					Master Inventory
 					</Navbar.Brand>
 				</Navbar>
 				<div className="container-fluid m-0 p-0">

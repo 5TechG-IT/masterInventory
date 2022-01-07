@@ -479,11 +479,7 @@ export default class ProductManager extends Component {
                                         </tr>
                                     );
                                 })
-                            ) : (
-                                <tr>
-                                    <td>No data found</td>
-                                </tr>
-                            )}
+                            ) : ""}
                         </tbody>
                     </table>
                      )}

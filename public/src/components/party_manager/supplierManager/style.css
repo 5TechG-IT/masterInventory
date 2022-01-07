@@ -1,0 +1,9 @@
+.main {
+	min-height: 92vh;
+}
+.view-loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 20vh;
+}

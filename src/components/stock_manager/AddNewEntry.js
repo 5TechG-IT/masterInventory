@@ -31,21 +31,33 @@ export class AddNewEntry extends Component {
             paid: 0,
             pending: 0,
 
+            productIds: null,
             products: null,
         };
     }
 
     fetchProducts = () => {
-        const query = `SELECT name FROM products where status = 1`;
+        const query = `SELECT id, name FROM products where status = 1`;
         let data = { crossDomain: true, crossOrigin: true, query: query };
         axios
             .post(API_URL, data)
             .then((res) => {
                 let _res = res.data.map((item) => {
-                    return item.name;
+                    
+                    return item.name ;
                 });
+                
                 this.setState({ products: _res });
                 // this.initializeDataTable();
+                let _response = res.data.map((item) => {
+                    
+                    return item.id ;
+                });
+                
+                this.setState({ productIds: _response });
+                console.log(this.state.products)
+
+                console.log(this.state.productIds)
             })
             .catch((err) => {
                 console.log("product data fetch error: ", err);
@@ -107,9 +119,9 @@ export class AddNewEntry extends Component {
     }
 
     renderMenu() {
-        if (this.state.products != null) {
+        if (this.state.products != null && this.state.productIds != null) {
             return this.state.products.map((product, index) => {
-                return <MenuItem value={index + 1}>{product}</MenuItem>;
+                return <MenuItem value={this.state.productIds[index]}>{product}</MenuItem>;
             });
         }
     }

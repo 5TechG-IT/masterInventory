@@ -58,48 +58,42 @@ export default class StockManager extends Component {
       productCount: null,
       LedgerData: null,
       isLoadingLedger: false,
-      products: [
-        "preform_500_ml",
-        "perform_1_lit",
-        "preform_2_lit",
-        "l_dawar_500_ml",
-        "l_dawar_1_lit",
-        "l_dawar_2_lit",
-        "l_dawar_5_lit",
-        "l_dawar_20_lit",
-        "l_warana_1_lit",
-        "green_cap",
-        "blue_cap",
-        "white_cap",
-        "b_dawar_500_ml",
-        "b_dawar_1_lit",
-        "b_dawar_2_lit",
-        "b_warana_1_lit",
-        "can_5_lit",
-        "jar_20_lit",
-        "handle_2_lit",
-        "cello_tape",
-      ],
+      products: null,
     };
   }
 
-  fetchProductCount() {
-    const query = `SELECT * FROM stockCount;`;
+  // fetchProductCount() {
+  //   const query = `SELECT * FROM stockCount;`;
+  //   let data = { crossDomain: true, crossOrigin: true, query: query };
+  //   axios
+  //     .post(API_URL, data)
+  //     .then((res) => {
+  //       console.log("stockCount data: ", res.data);
+  //       this.setState({ productCount: res.data });
+  //       this.initializeDataTable();
+  //     })
+  //     .catch((err) => {
+  //       console.log("stockCount data fetch error: ", err);
+  //     });
+  // }
+
+  fetchProductData() {
+    const query = `SELECT * FROM products WHERE status = 1;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("stockCount data: ", res.data);
-        this.setState({ productCount: res.data });
+        console.log("products data: ", res.data);
+        this.setState({ products: res.data });
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("stockCount data fetch error: ", err);
+        console.log("products data fetch error: ", err);
       });
   }
 
   fetchLedgerData = () => {
-    const query = `SELECT * FROM stockLedger WHERE status=1;`;
+    const query = `SELECT sl.*, p.name as name FROM stockLedger sl left join products p on sl.productId = p.id WHERE sl.status=1;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     this.setState({ isLoadingLedger: true });
     axios
@@ -137,22 +131,22 @@ export default class StockManager extends Component {
       });
   }
 
-  updateProductCount(productId, quantity) {
-    const query = `UPDATE stockCount SET quantity = quantity - ${quantity}  WHERE productId=${productId};`;
-    let data = { crossDomain: true, crossOrigin: true, query: query };
-    axios
-      .post(API_URL, data)
-      .then((res) => {
-        console.log("count update status data: ", res.data);
-        console.log("count updated successfully");
-        setTimeout(() => {
-          this.refreshLedger();
-        }, 2000);
-      })
-      .catch((err) => {
-        console.log("record delete error: ", err);
-      });
-  }
+  // updateProductCount(productId, quantity) {
+  //   const query = `UPDATE stockCount SET quantity = quantity - ${quantity}  WHERE productId=${productId};`;
+  //   let data = { crossDomain: true, crossOrigin: true, query: query };
+  //   axios
+  //     .post(API_URL, data)
+  //     .then((res) => {
+  //       console.log("count update status data: ", res.data);
+  //       console.log("count updated successfully");
+  //       setTimeout(() => {
+  //         this.refreshLedger();
+  //       }, 2000);
+  //     })
+  //     .catch((err) => {
+  //       console.log("record delete error: ", err);
+  //     });
+  // }
 
   deleteRecord(id, productId, quantity) {
     const query = `UPDATE stockLedger SET status = 0  WHERE id=${id};`;
@@ -178,8 +172,9 @@ export default class StockManager extends Component {
   }
 
   componentDidMount() {
+    this.fetchProductData();
     this.fetchLedgerData();
-    this.fetchProductCount();
+    // this.fetchProductCount();
   }
 
   componentDidUpdate() {
@@ -217,10 +212,10 @@ export default class StockManager extends Component {
       return null;
     }
 
-    const ledger = this.state.LedgerData;
+    const Ledger = this.state.LedgerData;
     let last_modified = null;
 
-    return ledger.map((record) => {
+    return Ledger.map((record) => {
       let color = record.pending > 0 ? 'red' : '';
       // extract date only
       last_modified = moment(record["last_modified"]).format(
@@ -237,7 +232,7 @@ export default class StockManager extends Component {
             </Badge>{" "}
           </td>
           <td>
-            {this.state.products[record["productId"] - 1].replaceAll("_", " ")}
+            {record["name"]}
           </td>
           <td>{record["quantity"]}</td>
           <td>{record["amount"]}</td>
@@ -252,7 +247,7 @@ export default class StockManager extends Component {
               onClick={(e) => {
                 this.setState({
                   activeRecordId: record.id,
-                  activePaid: record.pending,
+                  activePaid: record.paid,
                 });
                 this.setState({ showUpdateModel: true });
               }}

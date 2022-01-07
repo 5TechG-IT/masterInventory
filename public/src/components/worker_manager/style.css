@@ -1,0 +1,6 @@
+.main {
+	min-height: 92vh;
+}
+body {
+	overflow-x: hidden; /* Hide horizontal scrollbar */
+  }

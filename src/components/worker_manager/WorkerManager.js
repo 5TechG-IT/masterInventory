@@ -258,7 +258,7 @@ class WorkerManager extends Component {
                 <FontAwesomeIcon icon={faBook} />
               </Button>
             </Link>
-            <Link to={`/presentyManager/${worker["id"]}`}>
+            <Link to={`presentyManager/${worker["id"]}`}>
               <Button
                 className="mx-1"
                 color="primary"

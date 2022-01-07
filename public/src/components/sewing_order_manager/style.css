@@ -1,0 +1,18 @@
+.main {
+	min-height: 75vh;
+}
+.measure2 {
+	background: rgb(255, 255, 255);
+}
+.measure1 {
+	background: aliceblue;
+}
+.measure {
+	background: rgba(228, 228, 228, 0.541);
+}
+
+.dim {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+}

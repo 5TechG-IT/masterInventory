@@ -1,0 +1,5 @@
+.main {
+	min-height: 92vh;
+	width: 99%;
+}
+.modal + .modal-backdrop + .modal + .modal-backdrop {display:none}

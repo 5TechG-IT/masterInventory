@@ -30,6 +30,7 @@ export default class Dashboard extends Component {
 
     fetchGstBillsCount() {
         let url = API_URL;
+        const billCount = this.state.billCount;
         const query = `SELECT COUNT(id) as billCount FROM billList WHERE status = 1 `;
        
         let data = { crossDomain: true, crossOrigin: true, query: query };
@@ -56,6 +57,7 @@ export default class Dashboard extends Component {
             .then((res) => {
                 console.log("sales count: ", res.data);
                 this.setState({ sales: res.data[0]["sales"] });
+                
             })
             .catch((err) => {
                 console.log("sales data error: ", err);
@@ -203,7 +205,8 @@ export default class Dashboard extends Component {
                                         <div className="small-box bg-success">
                                             <div className="inner">
                                             <h3>Total Sale</h3>
-                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.sales}</h2>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{ 
+                new Intl.NumberFormat('en-IN').format(this.state.sales)}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -213,7 +216,7 @@ export default class Dashboard extends Component {
                                         <div className="small-box bg-danger">
                                             <div className="inner">
                                             <h3>Total Expenses</h3>
-                                            <h2><i class="fas fa-rupee-sign"></i> {this.state.expenseCount}</h2>
+                                            <h2><i class="fas fa-rupee-sign"></i> {new Intl.NumberFormat('en-IN').format(this.state.expenseCount)}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -252,7 +255,7 @@ export default class Dashboard extends Component {
                                         <div className="small-box bg-warning">
                                             <div className="inner">
                                             <h3>GST Sale</h3>
-                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.gstSales}</h2>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{new Intl.NumberFormat('en-IN').format(this.state.gstSales)}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -262,7 +265,7 @@ export default class Dashboard extends Component {
                                         <div className="small-box bg-danger">
                                             <div className="inner">
                                             <h3>NON GST Sale</h3>
-                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.nonGstSales}</h2>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{new Intl.NumberFormat('en-IN').format(this.state.nonGstSales)}</h2>
                                             </div>
                                         </div>
                                     </div>
@@ -271,7 +274,7 @@ export default class Dashboard extends Component {
                                         <div className="small-box bg-primary">
                                             <div className="inner">
                                             <h3>Expense Amount</h3>
-                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{this.state.expenseAmount}</h2>
+                                            <h2><i class="fas fa-rupee-sign"></i> &nbsp;{new Intl.NumberFormat('en-IN').format(this.state.expenseAmount)}</h2>
                                             </div>
                                         </div>
                                     </div>

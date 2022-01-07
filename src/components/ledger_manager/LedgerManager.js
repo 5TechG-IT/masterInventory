@@ -206,7 +206,7 @@ class LedgerManager extends Component {
                                     showUpdateModal: true,
 
                                 });
-                                console.log("hii")
+                                
                                 //  this.setState({ showUpdateModal: true });
                             }}
                         >

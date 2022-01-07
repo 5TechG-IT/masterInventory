@@ -49,7 +49,7 @@ export default class NonbillHistory extends Component {
       mobile: 0,
       companyType: 1,
       total: 0,
-      vehicleNo: null,
+      vehicleNo: "",
       discount: null,
       receiverName: null,
       date: moment(new Date()).format("YYYY-MM-DD"),
@@ -334,42 +334,55 @@ export default class NonbillHistory extends Component {
           <Row>
             <Col className="mx-auto">
               <Card className="p-0">
-                <Card.Header>
-                  <h5 className="text-center pb-0 mb-0">
-                    {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
-                    <b>LIBERTY LIGHT HOUSE</b>
-                    <p>Dealers & Wholesalers in Fancy,Commercial & Industrial Lighting</p>
-                  </h5>
-                  <hr />
-                  <p className="text-center pb-0 mb-0">
-                    Sai Hights, Mayani Road, Vita, Tal. Khanapur, Dist. Sangli - 415311
-                  </p>
-                  <p className="text-center">
-                    Mobile.: 9869377908 / 9821488295 /9892618650
-                    {/* <hr />
-                    email ID: test@gmail.com */}
-                  </p>
-                  <hr />
+              <Card.Header>
+                  <div className="row">
+                    <div className="col-2 col-md-2 text-center">
+                      <img
+                        style={{marginLeft:'-1.5em'}}
+                        src="/Assets/patil.png"
+                        height="200"
+                        width="200"
+                      />
+                    </div>
+                    <div className="col-10">
+                      <h5 className="text-center pb-0 mb-0">
+                        {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
+                        <h2><b>पाटील ऑटोमोबाईल्स</b></h2>
+                        <p>सेल्स । स्पेअर्स । सर्विस </p>
+                      </h5>
+                      <hr />
+                      <p className="text-center pb-0 mb-0">
+                      क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली . 
+                      </p>
+                      <p className="text-center">
+                      भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
+                              {/* <hr />
+                          email ID: test@gmail.com */}
+                      </p>
+                    </div>
+                    </div>
+                    <hr />
 
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <p>
-                      Invoice No. <b>{this.state.activeBillId}</b>
-                    </p>
-                    <p>
-                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
-                    </p>
-                  </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <p>
+                        Invoice No. <b>{this.state.newaId}</b>
+                      </p>
+                      <p>
+                        Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
+                      </p>
+                    </span>
 
-                  <h5 className="text-center pb-0 mb-0">
-                    <b>TAX INVOICE</b>
-                  </h5>
+                    <h5 className="text-center pb-0 mb-0">
+                      <b>TAX INVOICE</b>
+                    </h5>
 
+                  
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -452,6 +465,19 @@ export default class NonbillHistory extends Component {
                         </b>
                       </h6>
                     </Col>
+                    <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        vehicle No:
+                        <b>
+                          {this.state.vehicleNo}
+                          
+                        </b>
+                      </h6>
+                    </Col>
                     
                   </Row>
                 </Card.Body>
@@ -511,7 +537,7 @@ export default class NonbillHistory extends Component {
                     )}
                   </Tbl>
                 </Card.Body>
-                <Card.Footer className="pb-3 mb-0">
+                {/* <Card.Footer className="pb-3 mb-0">
                   <Row>
                     <Col md={4}>
                       <h6
@@ -554,7 +580,7 @@ export default class NonbillHistory extends Component {
                       </h6>
                     </Col>
                   </Row>
-                </Card.Footer>
+                </Card.Footer> */}
               </Card>
             </Col>
           </Row>

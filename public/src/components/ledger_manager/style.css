@@ -1,0 +1,9 @@
+.main {
+	min-height: 92vh;
+}
+body{
+    overflow-x:hidden;
+}
+.hideScrollbar::-webkit-scrollbar{
+    display: none; 
+   }
