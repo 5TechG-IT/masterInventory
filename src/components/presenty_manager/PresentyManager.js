@@ -172,7 +172,7 @@ class PresentyManager extends Component {
     this.fetchPresentyData();
     this.fetchTotalPresenty();
     this.setState({
-      selectedMonth: new Date().getMonth(),
+      selectedMonth: new Date().getMonth() + 1,
     });
   }
 

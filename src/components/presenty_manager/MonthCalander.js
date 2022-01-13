@@ -47,7 +47,7 @@ class MonthlyCalander extends Component {
     let url = API_URL;
     const query = `SELECT *,DAY(date) as day, MONTH(date) as month FROM presenty WHERE workerId=${
       this.state.workerId
-    } HAVING month=${this.state.month + 1} ;`;
+    } HAVING month=${this.state.month } ;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)

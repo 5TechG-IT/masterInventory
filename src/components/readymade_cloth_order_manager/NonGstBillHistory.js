@@ -38,8 +38,8 @@ export default class NonbillHistory extends Component {
       showUpdateModel: false,
       activeBillId: null,
       activePaid: 0,
-      startDate: null,
-      endDate: null,
+      startDate: moment(new Date()).format("YYYY-MM-DD"),
+      endDate: moment(new Date()).format("YYYY-MM-DD"),
       aadharCard: null,
       adjustment: 0,
       balance: 0,
@@ -52,7 +52,7 @@ export default class NonbillHistory extends Component {
       mobile: 0,
       companyType: 1,
       total: 0,
-      vehicleNo: "",
+      // vehicleNo: "",
       discount: null,
       receiverName: null,
       date: moment(new Date()).format("YYYY-MM-DD"),
@@ -256,7 +256,7 @@ export default class NonbillHistory extends Component {
                     companyType: bill.companyType,
                     total: bill.total,
                     adjustment: bill.adjustment,
-                    vehicleNo: bill.vehicleNo,
+                    // vehicleNo: bill.vehicleNo,
                     discount: bill.discount,
                     receiverName: bill.receiverName,
                     paymentMode: bill.paymentMode,
@@ -505,7 +505,7 @@ export default class NonbillHistory extends Component {
                         </b>
                       </h6>
                     </Col>
-                    <Col md={6}>
+                    {/* <Col md={6}>
                       <h6
                         style={{
                           textTransform: "capitalize",
@@ -517,7 +517,7 @@ export default class NonbillHistory extends Component {
                           
                         </b>
                       </h6>
-                    </Col>
+                    </Col> */}
                     
                   </Row>
                 </Card.Body>
@@ -679,6 +679,8 @@ export default class NonbillHistory extends Component {
                 variant="contained"
                 className="ml-3 p-1"
                 size="small"
+                style={{height:'40px'}}
+
                 onClick={(e) => { this.clearFilter() }}
               >
                 <FontAwesomeIcon

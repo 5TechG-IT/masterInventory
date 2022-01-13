@@ -36,14 +36,14 @@ function NavbarPanel(props) {
                                 style={{ opacity: ".8" }}
                             />
                             <span className="brand-text font-weight-light">
-                                <b>Umika Associates</b>
+                                <b>Master Inventory</b>
                             </span>
                         </Link>
                     </div>
                     {/* Sidebar */}
                     <div className="sidebar">
                         {/* Sidebar user panel (optional) */}
-                        <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+                        {/* <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                             <div className="image mt-1">
                                 <img
                                     src="dist/img/user2-160x160.jpg"
@@ -65,7 +65,7 @@ function NavbarPanel(props) {
                                     <i class="fas fa-sign-out-alt m-0"></i>
                                 </Button>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Sidebar Menu */}
                         <nav className="mt-2">
@@ -79,44 +79,44 @@ function NavbarPanel(props) {
                                 with font-awesome or any other icon font library */}
                                
 								<Link to="/dashboard">
-							<Button variant="Primary" size="sm" block  className="nav-link active" style={{marginBottom:'8px'}}>
+							<Button variant="Primary" size="sm" block  className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}}>
 								Dashboard
 							</Button>
 						</Link>
                                
 								<Link to="/mainDashboard">
-							<Button variant="light" size="sm" block  className="nav-link active" style={{marginBottom:'8px'}} >
+							<Button variant="light" size="sm" block  className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}} >
 								Bill Manager
 							</Button>
 						</Link>
                               
 								<Link to="/productManager">
-							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}}  >
 								Product manager
 							</Button>
 						</Link>
                                
 
 								<Link to="/stockManager">
-							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}} >
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}} >
 								Stock manager
 							</Button>
 						</Link>
                                
 								<Link to="/expenseManager">
-							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}>
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}}>
 								Expense manager
 							</Button>
 						</Link>
                                 
 								<Link to="/partyManager">
-							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}}  >
 								Party manager
 							</Button>
 						</Link>
                                 
 								<Link to="/workerManager">
-							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px',height:'25px',paddingBottom:'23px',paddingTop:'5px'}}  >
 								Worker manager
 							</Button>
 						</Link>

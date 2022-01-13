@@ -3,7 +3,6 @@ import { Row, Col, Modal, Card, Table as Tbl } from "react-bootstrap";
 import { faPlusCircle, faSyncAlt, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer } from "react-toastify";
 
-
 //Bootstrap and jQuery libraries
 import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery/dist/jquery.min.js";
@@ -30,7 +29,7 @@ import {
 import { API_URL } from "../../global";
 const axios = require("axios");
 
-export default class GstBillHistory extends Component {
+export default class Quotation extends Component {
   constructor(props) {
     super();
 
@@ -39,10 +38,9 @@ export default class GstBillHistory extends Component {
       showUpdateModel: false,
       activeBillId: null,
       activePaid: 0,
-      discount: null,
-
       startDate: moment(new Date()).format("YYYY-MM-DD"),
       endDate: moment(new Date()).format("YYYY-MM-DD"),
+      aadharCard: null,
       adjustment: 0,
       balance: 0,
       code: null,
@@ -50,23 +48,23 @@ export default class GstBillHistory extends Component {
       paid: 0,
       partyId: null,
       pname: null,
-      total: 0,
-      gst: 0,
-      // vehicleNo: null,
+      address: null,
+      mobile: 0,
       companyType: 1,
-      mobileNo: 0,
-      paymentMode: 0,
+      total: 0,
+    //   vehicleNo: "",
+      discount: null,
       receiverName: null,
+      date: moment(new Date()).format("YYYY-MM-DD"),
+      paymentMode: 0,
       itemsList: [],
       isLoadingItems: false,
-      // vehicleNo: null,
     };
   }
 
   fetchBillList = () => {
     let url = API_URL;
-    const query = `SELECT ngb.*, p.name as pname,mobile,p.address,companyType,discount FROM gstBill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC;`;
-    console.log(query)
+    const query = `SELECT qt.*, p.name as pname,mobile,p.address,companyType,discount FROM quotations as qt inner join party as p where qt.partyId = p.id AND qt.status=1 ORDER BY qt.id DESC`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -83,8 +81,10 @@ export default class GstBillHistory extends Component {
   };
 
   refreshProducts() {
-    
+    console.log("hi")
     var data = this.state.billList;
+    console.log(data)
+
     var startDate = this.state.startDate;
     var endDate = this.state.endDate;
 
@@ -100,7 +100,7 @@ export default class GstBillHistory extends Component {
 
   clearFilter(){
     let url = API_URL;
-    const query = `SELECT gb.* , p.name as pname FROM gstBill as gb inner join party as p where gb.partyId = p.id AND gb.status=1 ORDER BY gb.id DESC ;`;
+    const query = `SELECT qt.* , p.name as pname FROM quotations as qt inner join party as p where qt.partyId = p.id AND qt.status=1 ORDER BY qt.id DESC ;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
         .post(url, data)
@@ -119,7 +119,7 @@ export default class GstBillHistory extends Component {
 
   fetchBillItemList = () => {
     let url = API_URL;
-    const query = `SELECT bl.* FROM billList as bl inner join gstBill as ngb on bl.billId=ngb.id where bl.billId= ${this.state.activeBillId}`;
+    const query = `SELECT bl.* FROM billList as bl inner join quotations as qt on bl.billId=qt.id where bl.billId= ${this.state.activeBillId}`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -137,7 +137,7 @@ export default class GstBillHistory extends Component {
 
   deleteRecord(id) {
     let url = API_URL;
-    const query = `UPDATE gstBill SET status = 0  WHERE id=${id};`;
+    const query = `UPDATE nonGstBill SET status = 0  WHERE id=${id};`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -145,6 +145,7 @@ export default class GstBillHistory extends Component {
         console.log("deleted status data: ", res.data);
         console.log("item deleted successfully");
         toast.success("Record deleted successfully");
+        window.location.reload();
         this.fetchBillList();
       })
       .catch((err) => {
@@ -167,8 +168,8 @@ export default class GstBillHistory extends Component {
 
   handleUpdateSubmit(e) {
     let url = API_URL;
-    const query = `UPDATE gstBill SET balance = total - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
-    console.log(query)
+    const query = `UPDATE nonGstBill SET balance = total - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
+
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -184,8 +185,6 @@ export default class GstBillHistory extends Component {
         console.log(err);
       });
   }
-
- 
 
   componentDidUpdate() {
     const title = "Party data -" + moment().format("DD-MMMM-YYYY");
@@ -222,6 +221,7 @@ export default class GstBillHistory extends Component {
     });
   }
 
+
   renderMemoList = () => {
     if (this.state.billList == null) return null;
 
@@ -247,23 +247,19 @@ export default class GstBillHistory extends Component {
                   {
                     activeBillId: bill.id,
                     showDisplayBillModal: true,
-
+                    aadharCard: bill.aadharCard,
                     code: bill.code,
                     date: bill.date,
                     pname: bill.pname,
-                    gstin: bill.gstin,
-                    total: bill.total,
                     mobile: bill.mobile,
                     address: bill.address,
                     companyType: bill.companyType,
+                    total: bill.total,
                     adjustment: bill.adjustment,
                     // vehicleNo: bill.vehicleNo,
-                    mobileNo: bill.mobileNo,
-                    gst: bill.gst,
                     discount: bill.discount,
-                    paymentMode: bill.paymentMode,
                     receiverName: bill.receiverName,
-                    // vehicleNo: bill.vehicleNo,
+                    paymentMode: bill.paymentMode,
                   },
                   this.fetchBillItemList
                 );
@@ -378,11 +374,11 @@ export default class GstBillHistory extends Component {
           <Row>
             <Col className="mx-auto">
               <Card className="p-0">
-                <Card.Header>
+              <Card.Header>
                   <div className="row">
                     <div className="col-2 col-md-2 text-center">
                       <img
-                        style={{ marginLeft: '-1.5em' }}
+                        style={{marginLeft:'-1.5em'}}
                         src="/Assets/patil.png"
                         height="200"
                         width="200"
@@ -396,37 +392,37 @@ export default class GstBillHistory extends Component {
                       </h5>
                       <hr />
                       <p className="text-center pb-0 mb-0">
-                        क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली .
+                      क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली . 
                       </p>
                       <p className="text-center">
-                        भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
-                        {/* <hr />
+                      भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
+                              {/* <hr />
                           email ID: test@gmail.com */}
                       </p>
                     </div>
-                  </div>
-                  <hr />
+                    </div>
+                    <hr />
 
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <p>
-                      Invoice No. <b>{this.state.newaId}</b>
-                    </p>
-                    <p>
-                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
-                    </p>
-                  </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <p>
+                        Invoice No. <b>{this.state.newaId}</b>
+                      </p>
+                      <p>
+                        Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
+                      </p>
+                    </span>
 
-                  <h5 className="text-center pb-0 mb-0">
-                    <b>TAX INVOICE</b>
-                  </h5>
+                    <h5 className="text-center pb-0 mb-0">
+                      <b>QUOTATION</b>
+                    </h5>
 
-
+                  
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -467,7 +463,7 @@ export default class GstBillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        Mobile No: <b>{this.state.mobileNo}</b>
+                        Mobile No: <b>{this.state.mobile}</b>
                       </h6>
                     </Col>
                   </Row>
@@ -488,7 +484,7 @@ export default class GstBillHistory extends Component {
                           textTransform: "capitalize",
                         }}
                       >
-                        GSTIN: <b>{this.state.gstin}</b>
+                        Sign:
                       </h6>
                     </Col>
 
@@ -497,32 +493,33 @@ export default class GstBillHistory extends Component {
 
                   <Row>
                     <Col md={6}>
-                      <p>
-                        <b>
-                          Payment Mode: {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
-                        </b>
-                      </p>
-                    </Col>
-                    <Col md={6}>
                       <h6
                         style={{
                           textTransform: "capitalize",
                         }}
                       >
-                        Sign:
+                        Payment Mode:
+                        <b>
+                          {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
+                          
+                        </b>
                       </h6>
                     </Col>
-                  </Row>
-                  {/* <Row>
-                    <Col md={6}>
-                      <p>
+                    {/* <Col md={6}>
+                      <h6
+                        style={{
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        vehicle No:
                         <b>
-                          vehicle No: {this.state.vehicleNo}
+                          {this.state.vehicleNo}
+                          
                         </b>
-                      </p>
-                    </Col>
-
-                  </Row> */}
+                      </h6>
+                    </Col> */}
+                    
+                  </Row>
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
                   {/* Order overview */}
@@ -532,11 +529,10 @@ export default class GstBillHistory extends Component {
                         <th>Particular</th>
                         <th>Description</th>
                         <th>Batch</th>
-                        <th>Quantity</th>
+                        <th>Part Qty.</th>
                         <th>Rate</th>
                         <th>Discount %</th>
-                        <th>Total</th>
-
+                        <th>Amount</th>
                       </tr>
                     </thead>
                     {this.state.itemsList.length > 0 ? (
@@ -545,39 +541,26 @@ export default class GstBillHistory extends Component {
                           return (
                             // <tr key={"" + item.particularValue.title}>
                             //   <td>{item.particularValue.title} </td>
-                            // <tr key={"" + item.particular}>
-                            //   <td>{item.particular} </td>
-                            //   <td>{item.batch}</td>
-                            //   <td>{item.quantity}</td>
-                            //   <td>{item.rate}</td>
-                            //   <td>{item.amount}</td>
-                            // </tr>
                             <tr key={"" + item.particular}>
                               <td>{item.particular} </td>
                               <td>{item.description}</td>
                               <td>{item.batch}</td>
                               <td>{item.quantity}</td>
                               <td>{item.rate}</td>
-                              <td>{item.discount}</td>
+                              <td>{this.state.discount}</td>
                               <td>{item.amount}</td>
-
                             </tr>
                           );
                         })}
                         <br></br>
                         <tr>
-                          <td colSpan="4">Total amount before tax</td>
+                          <td colSpan="4">Total amount</td>
                           <td></td>
                           <td></td>
-                          <td colSpan="2">{this.state.total}</td>
+                          <td colSpan="2">
+                            {this.state.total}
+                          </td>
                         </tr>
-                        <tr>
-                          <td colSpan="4">IGST 18%</td>
-                          <td></td>
-                          <td></td>
-                          <td colSpan="2">{this.state.gst}</td>
-                        </tr>
-
                         <tr>
                           <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
                           <td></td>
@@ -593,7 +576,7 @@ export default class GstBillHistory extends Component {
                       </tbody>
                     )}
                   </Tbl>
-                  <p className="text-center" style={{marginBottom:'-1em',marginTop:'1em',fontSize:'10px'}}>developed by 5TechG Lab | M:7028828831/9172227004</p>
+                  <p className="text-center" style={{marginBottom:'-1em',marginTop:'1em',fontSize:'10px'}}>developed by 5TechG Lab | M:7028828831/9172227004</p>  
                 </Card.Body>
                 {/* <Card.Footer className="pb-3 mb-0">
                   <Row>
@@ -648,11 +631,12 @@ export default class GstBillHistory extends Component {
   };
 
   render() {
-
     return (
       <div>
         <div className="row">
           <form autoComplete="off">
+
+
             <div className="row ml-4 mt-4">
 
               <TextField
@@ -682,7 +666,6 @@ export default class GstBillHistory extends Component {
                   this.setState({ endDate: e.target.value })
                 }
               />
-
               <Button
                 color="primary"
                 variant="contained"
@@ -691,13 +674,13 @@ export default class GstBillHistory extends Component {
               >
                 <FontAwesomeIcon icon={faSyncAlt} size="2x" />
               </Button>
-              
               <Button
                 color="secondary"
                 variant="contained"
                 className="ml-3 p-1"
                 size="small"
                 style={{height:'40px'}}
+
                 onClick={(e) => { this.clearFilter() }}
               >
                 <FontAwesomeIcon
@@ -726,7 +709,6 @@ export default class GstBillHistory extends Component {
                     <th align="center">Balance</th>
                     <th align="center">Date</th>
                     <th align="center">Actions</th>
-
                   </tr>
                 </thead>
                 <tbody>{this.renderMemoList()}</tbody>

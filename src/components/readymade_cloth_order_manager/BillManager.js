@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ReactToPrint from "react-to-print";
+import ReactToPrint, { PrintContextConsumer } from "react-to-print";
 import moment from "moment";
 // import libarty from "../../img/libarty.png";
 
@@ -60,7 +60,7 @@ export default class BillManager extends Component {
       code: null,
       companyType: 1,
       discount: null,
-      vehicleNo: "",
+      // vehicleNo: "",
 
       PaymentMode: [],
       priceMode: 1,
@@ -72,7 +72,7 @@ export default class BillManager extends Component {
       particular: null,
       product: null,
       hsn: "2201",
-      partQty: 0,
+      partQty: 1,
       batch: "",
       description: "N/A",
       rate: 0,
@@ -442,8 +442,31 @@ export default class BillManager extends Component {
         ${this.state.priceMode}
         )`;
       console.log(query)
-    } else {
+    } else if (this.state.billType === 2) {
       query = `INSERT INTO nonGstBill (partyId, partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid, paymentMode) values(
+        ${this.state.partyId},
+        '${this.state.newPartyName}',  
+        '${this.state.receiverName}', 
+        '${moment(
+        date
+      ).format()}',
+        ${this.state.mobileNumber},
+        ${this.state.companyType},
+        ${this.state.code}, 
+        ${this.state.grandTotal},
+        ${this.state.discount},
+        ${this.state.balance}-${this.state.paid}, 
+        1,
+        '${moment(
+        date
+      ).format()}',
+        ${this.state.paid},
+        ${this.state.priceMode}
+        )`;
+      console.log(query)
+    }
+    else {
+      query = `INSERT INTO quotations (partyId, partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid, paymentMode) values(
         ${this.state.partyId},
         '${this.state.newPartyName}',  
         '${this.state.receiverName}', 
@@ -869,6 +892,7 @@ export default class BillManager extends Component {
             >
               <MenuItem value={1}>GST</MenuItem>
               <MenuItem value={2}>Non GST</MenuItem>
+              <MenuItem value={3}>Quotation</MenuItem>
             </Select>
           </FormControl>
 
@@ -1105,7 +1129,7 @@ export default class BillManager extends Component {
             </Col>
           </Row>
         </div>
-        <div className="mt-1 p-2 measure">
+        <div className="mt-1 p-2 measure"  ref={(el) => (this.printComponentRef = el)}>
           <Row>
             <Col md={8} className="mx-auto">
               <Card className="mt-2 p-0">
@@ -1154,7 +1178,7 @@ export default class BillManager extends Component {
                     </span>
 
                     <h5 className="text-center pb-0 mb-0">
-                      <b>TAX INVOICE</b>
+                      <b> {this.state.billType == 3 ? "QUOTATION" : "TAX INVOICE"}</b>
                     </h5>
 
                   
@@ -1248,7 +1272,7 @@ export default class BillManager extends Component {
                       </h6>
                     </Col>
                   </Row>
-                  <Row>
+                  {/* <Row>
                     <Col md={6}>
                       <h6
                         style={{
@@ -1259,7 +1283,7 @@ export default class BillManager extends Component {
                         Vehicle No: <b>{this.state.vehicleNo}</b>
                       </h6>
                     </Col>
-                  </Row>
+                  </Row> */}
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
                   {/* Order overview */}
@@ -1427,23 +1451,28 @@ export default class BillManager extends Component {
           </Row>
         </div>
         <div className="col-10">
-          <ReactToPrint
-            trigger={() => (
-              <Button
-                className="mt-2 mr-1"
-                color="primary"
-                variant="contained"
-                style={{ float: "right" }}
-              // disabled={
-              //   this.state.partyName && this.state.address
-              //     ? false
-              //     : true
-              // }
-              >
-                Print Bill
-              </Button>
-            )}
-          />
+        <ReactToPrint content={() => this.printComponentRef}>
+                    <PrintContextConsumer>
+                        {({ handlePrint }) => (
+                            <Button
+                                onClick={handlePrint}
+                                className="mt-2 mr-1"
+                                color="primary"
+                                variant="contained"
+                                style={{ float: "right" }}
+                                // disabled={
+                                //     (this.state.partyName ||
+                                //         this.state.newPartyName) &&
+                                //     this.state.address
+                                //         ? false
+                                //         : true
+                                // }
+                            >
+                                Print
+                            </Button>
+                        )}
+                    </PrintContextConsumer>
+                </ReactToPrint>
           <Button
             className="mt-2 mr-1"
             color="secondary"
