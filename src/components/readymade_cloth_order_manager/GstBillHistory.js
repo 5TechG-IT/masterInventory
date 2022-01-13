@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { Row, Col, Modal, Card, Table as Tbl } from "react-bootstrap";
+import { faPlusCircle, faSyncAlt, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { ToastContainer } from "react-toastify";
+
 
 //Bootstrap and jQuery libraries
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -38,7 +41,8 @@ export default class GstBillHistory extends Component {
       activePaid: 0,
       discount: null,
 
-
+      startDate: null,
+      endDate: null,
       adjustment: 0,
       balance: 0,
       code: null,
@@ -55,7 +59,7 @@ export default class GstBillHistory extends Component {
       receiverName: null,
       itemsList: [],
       isLoadingItems: false,
-      vehicleNo:null,
+      vehicleNo: null,
     };
   }
 
@@ -77,6 +81,41 @@ export default class GstBillHistory extends Component {
         console.log("deliveryMemo list fetch error: ", err);
       });
   };
+
+  refreshProducts() {
+    
+    var data = this.state.billList;
+    var startDate = this.state.startDate;
+    var endDate = this.state.endDate;
+
+    var result = data.filter(function (obj) {
+      return obj.date >= startDate && obj.date <= endDate;
+    })
+    console.log(result)
+    this.setState({ billList: result });  
+    // // init data table
+    // this.initializeDataTable();
+
+  }
+
+  clearFilter(){
+    let url = API_URL;
+    const query = `SELECT gb.* , p.name as pname FROM gstBill as gb inner join party as p where gb.partyId = p.id AND gb.status=1 ORDER BY gb.id DESC ;`;
+    let data = { crossDomain: true, crossOrigin: true, query: query };
+    axios
+        .post(url, data)
+        .then((res) => {
+            console.log("bill: ", res.data);
+            this.setState({ billList: res.data });
+
+            // init data table
+            this.initializeDataTable();
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.log("deliveryMemo list fetch error: ", err);
+        });
+};
 
   fetchBillItemList = () => {
     let url = API_URL;
@@ -145,6 +184,8 @@ export default class GstBillHistory extends Component {
         console.log(err);
       });
   }
+
+ 
 
   componentDidUpdate() {
     const title = "Party data -" + moment().format("DD-MMMM-YYYY");
@@ -337,11 +378,11 @@ export default class GstBillHistory extends Component {
           <Row>
             <Col className="mx-auto">
               <Card className="p-0">
-              <Card.Header>
+                <Card.Header>
                   <div className="row">
                     <div className="col-2 col-md-2 text-center">
                       <img
-                        style={{marginLeft:'-1.5em'}}
+                        style={{ marginLeft: '-1.5em' }}
                         src="/Assets/patil.png"
                         height="200"
                         width="200"
@@ -355,37 +396,37 @@ export default class GstBillHistory extends Component {
                       </h5>
                       <hr />
                       <p className="text-center pb-0 mb-0">
-                      क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली . 
+                        क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली .
                       </p>
                       <p className="text-center">
-                      भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
-                              {/* <hr />
+                        भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
+                        {/* <hr />
                           email ID: test@gmail.com */}
                       </p>
                     </div>
-                    </div>
-                    <hr />
+                  </div>
+                  <hr />
 
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <p>
-                        Invoice No. <b>{this.state.newaId}</b>
-                      </p>
-                      <p>
-                        Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
-                      </p>
-                    </span>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <p>
+                      Invoice No. <b>{this.state.newaId}</b>
+                    </p>
+                    <p>
+                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
+                    </p>
+                  </span>
 
-                    <h5 className="text-center pb-0 mb-0">
-                      <b>TAX INVOICE</b>
-                    </h5>
+                  <h5 className="text-center pb-0 mb-0">
+                    <b>TAX INVOICE</b>
+                  </h5>
 
-                  
+
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -458,7 +499,7 @@ export default class GstBillHistory extends Component {
                     <Col md={6}>
                       <p>
                         <b>
-                        Payment Mode: {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
+                          Payment Mode: {this.state.paymentMode == 1 ? "cash" : this.state.paymentMode == 2 ? "cheque" : this.state.paymentMode == 3 ? "online" : ""}
                         </b>
                       </p>
                     </Col>
@@ -476,11 +517,11 @@ export default class GstBillHistory extends Component {
                     <Col md={6}>
                       <p>
                         <b>
-                        vehicle No: {this.state.vehicleNo}
+                          vehicle No: {this.state.vehicleNo}
                         </b>
                       </p>
                     </Col>
-                  
+
                   </Row>
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
@@ -538,10 +579,10 @@ export default class GstBillHistory extends Component {
                         </tr>
 
                         <tr>
-                          <td colSpan="4">Grand Total</td>
+                          <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
                           <td></td>
                           <td></td>
-                          <td colSpan="2">{this.state.total}</td>
+                          <td colSpan="2" style={{fontWeight:'bold'}}>{this.state.total}</td>
                         </tr>
                       </tbody>
                     ) : (
@@ -552,6 +593,7 @@ export default class GstBillHistory extends Component {
                       </tbody>
                     )}
                   </Tbl>
+                  <p className="text-center" style={{marginBottom:'-1em',marginTop:'1em',fontSize:'10px'}}>developed by 5TechG Lab | M:7028828831/9172227004</p>
                 </Card.Body>
                 {/* <Card.Footer className="pb-3 mb-0">
                   <Row>
@@ -606,8 +648,66 @@ export default class GstBillHistory extends Component {
   };
 
   render() {
+
     return (
       <div>
+        <div className="row">
+          <form autoComplete="off">
+            <div className="row ml-4 mt-4">
+
+              <TextField
+                id="Start Date"
+                label="Date From"
+                variant="outlined"
+                type="date"
+                className="mr-2"
+                required={true}
+                size="small"
+                value={this.state.startDate}
+                onChange={(e) =>
+                  this.setState({ startDate: e.target.value })
+                }
+              />
+
+
+              <TextField
+                id="End date"
+                label="Date To"
+                variant="outlined"
+                type="date"
+                className="mr-2"
+                size="small"
+                value={this.state.endDate}
+                onChange={(e) =>
+                  this.setState({ endDate: e.target.value })
+                }
+              />
+
+              <Button
+                color="primary"
+                variant="contained"
+                className="mb-3 ml-2"
+                onClick={(e) => { this.refreshProducts() }}
+              >
+                <FontAwesomeIcon icon={faSyncAlt} size="2x" />
+              </Button>
+              
+              <Button
+                color="secondary"
+                variant="contained"
+                className="ml-3 p-1"
+                size="small"
+                onClick={(e) => { this.clearFilter() }}
+              >
+                <FontAwesomeIcon
+                  icon={faWindowClose}
+                  size="2x"
+                />
+              </Button>
+            </div>
+          </form>
+          <ToastContainer />
+        </div>
         <Row>
           <Col
             md="12"

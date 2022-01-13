@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
@@ -6,6 +7,7 @@ import "./style.css";
 import { useContex,useState } from "react";
 
 import Statistics from "./Statistics";
+
 
 function NavbarPanel(props) {
 	const handleLogout = () => {
@@ -18,95 +20,116 @@ function NavbarPanel(props) {
 	// 		: false
 	// );
 	// console.log(userName)
-
 	
-	return (
-		<div className="container-fluid  main-navbar">
-			<div>
-				<Card className="mb-2">
-					<Card.Body className="p-2 profile-body">
-						<Avatar className="profile">
-							{props.user.slice(0, 1).toUpperCase()}
-						</Avatar>
-						<Badge
-							variant="warning"
-							className="mt-2"
-							style={{ textTransform: "capitalize" }}
-						>
-							{props.user}
-						</Badge>
-					</Card.Body>
-				</Card>
-				<Card border="primary" className="mb-2">
-					<Card.Body className="m-0 p-1">
-						<h6>Menu</h6>
-						<Link to="/dashboard">
-							<Button variant="primary" size="sm" block className="mb-2">
+
+        return (
+            <div>
+                {/* Main Sidebar Container */}
+                <aside className="main-sidebar sidebar-dark-primary elevation-4">
+                    {/* Brand Logo */}
+                    <div className="brand-link">
+                        <Link to={`/dashboard`}>
+                            <img
+                                src="dist/img/AdminLTELogo.png"
+                                alt="AdminLTE Logo"
+                                className="brand-image img-circle elevation-3"
+                                style={{ opacity: ".8" }}
+                            />
+                            <span className="brand-text font-weight-light">
+                                <b>Umika Associates</b>
+                            </span>
+                        </Link>
+                    </div>
+                    {/* Sidebar */}
+                    <div className="sidebar">
+                        {/* Sidebar user panel (optional) */}
+                        <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+                            <div className="image mt-1">
+                                <img
+                                    src="dist/img/user2-160x160.jpg"
+                                    className="img-circle elevation-2"
+                                    alt="User Image"
+                                />
+                            </div>
+                            <div className="info" className="d-flex">
+                                <a className="d-flex d-auto mx-2" style={{ textTransform: "capitalize" }}>
+									{props.user}
+                                </a>
+                                <div class="clearfix"></div>
+
+                                <Button
+                                    variant="outline-secondary"
+                                    onClick={handleLogout}
+                                    size="sm"
+                                >
+                                    <i class="fas fa-sign-out-alt m-0"></i>
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* Sidebar Menu */}
+                        <nav className="mt-2">
+                            <ul
+                                className="nav nav-pills nav-sidebar flex-column nav-treeview"
+                                data-widget="treeview"
+                                role="menu"
+                                data-accordion="false"
+                            >
+                                {/* Add icons to the links using the .nav-icon class
+                                with font-awesome or any other icon font library */}
+                               
+								<Link to="/dashboard">
+							<Button variant="Primary" size="sm" block  className="nav-link active" style={{marginBottom:'8px'}}>
 								Dashboard
 							</Button>
 						</Link>
-						<Link to="/mainDashboard">
-							<Button variant="primary" size="sm" block className="mb-2">
+                               
+								<Link to="/mainDashboard">
+							<Button variant="light" size="sm" block  className="nav-link active" style={{marginBottom:'8px'}} >
 								Bill Manager
 							</Button>
 						</Link>
-						<Link to="/productManager">
-							<Button variant="primary" size="sm" block className="mb-2" >
+                              
+								<Link to="/productManager">
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
 								Product manager
 							</Button>
 						</Link>
-						<Link to="/stockManager">
-							<Button variant="primary" size="sm" block className="mb-2">
+                               
+
+								<Link to="/stockManager">
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}} >
 								Stock manager
 							</Button>
 						</Link>
-						<Link to="/expenseManager">
-							<Button variant="primary" size="sm" block className="mb-2">
+                               
+								<Link to="/expenseManager">
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}>
 								Expense manager
 							</Button>
 						</Link>
-						<Link to="/partyManager">
-							<Button variant="primary" size="sm" block className="mb-2">
+                                
+								<Link to="/partyManager">
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
 								Party manager
 							</Button>
 						</Link>
-						<Link to="/workerManager">
-							<Button variant="primary" size="sm" block className="mb-2">
+                                
+								<Link to="/workerManager">
+							<Button variant="light" size="sm" block className="nav-link active" style={{marginBottom:'8px'}}  >
 								Worker manager
 							</Button>
 						</Link>
-					
-
-						{/* <Link to="/partyManager">
-							<Button variant="primary" size="sm" block className="mb-2">
-								Setting
-							</Button>
-						</Link> */}
-
-					</Card.Body>
-				</Card>
-				{/* <Card className="m-0 p-1">
-					<Card.Body className="m-0 p-1">
-						<Statistics />
-					</Card.Body>
-				</Card> */}
-			</div>
-			<Row>
-				<Col xs={6} className="mx-auto">
-					<Button
-						variant="dark btn-block"
-						size="sm"
-						className="mb-2"
-						onClick={handleLogout}
-					>
-						Logout
-					</Button>
-				</Col>
-			</Row>
-		</div>
-
-
-	);
+                               
+                            </ul>
+                        </nav>
+                        {/* /.sidebar-menu */}
+                    </div>
+                    {/* /.sidebar */}
+                </aside>
+            </div>
+        );
+  
 }
 
 export default NavbarPanel;

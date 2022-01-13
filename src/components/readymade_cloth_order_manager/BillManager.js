@@ -188,8 +188,8 @@ export default class BillManager extends Component {
 
   fetchDescription(productId) {
 
-    if (!this.state.productData)
-      return;
+    if (this.state.productData == null)
+      return null;
     let description = this.state.productData.find(
       (product) => {
         if (product.id == productId) {
@@ -539,6 +539,7 @@ export default class BillManager extends Component {
         console.log(err);
       });
   }
+
   refreshParties() {
     window.location.reload(false);
   }
@@ -548,6 +549,7 @@ export default class BillManager extends Component {
     this.getIdPartyList();
     this.getproductData();
     this.fetchNewId();
+    this.fetchDescription();
   }
 
   render() {
@@ -993,7 +995,7 @@ export default class BillManager extends Component {
                         // productPrice: value.split(", ")[4],
                       });
 
-                      this.fetchDescription(Number(value.split(", ")[0]));
+                        this.fetchDescription(String(value.split(", ")[0]));
                       this.fetchRate(Number(value.split(", ")[0]));
 
                     } else {
@@ -1351,11 +1353,11 @@ export default class BillManager extends Component {
                         )}
 
                         <tr>
-                          <td colSpan="4">Grand Total</td>
+                          <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
                           <td></td>
                           <td></td>
 
-                          <td colSpan="2">{this.state.grandTotal}</td>
+                          <td colSpan="2" style={{fontWeight:'bold'}}>{this.state.grandTotal}</td>
                         </tr>
                       </tbody>
                     ) : (

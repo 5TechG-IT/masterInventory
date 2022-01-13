@@ -301,6 +301,73 @@ export class ExpenseManager extends Component {
     );
   }
 
+  renderExpenses() {
+    if(this.state.expenseData == null)
+      return null;
+    return  (
+      this.state.expenseData.map((expense) => {
+        return (
+          <tr key={expense.id}>
+            <td align="center">
+              <Badge variant="primary"> {expense.id}</Badge>
+            </td>
+            <td style={{ textTransform: "capitalize" }}>
+              {expense.description}
+            </td>
+            <td>₹ {expense.amount}</td>
+            <td>
+              {moment(expense.date).format("D MMMM YYYY ")}
+            </td>
+            <td align="center">
+              <Button
+                color="secondary"
+                variant="contained"
+                className="mt-1 mb-1"
+                onClick={(e) => {
+                  this.setState({
+                    activeExpenseId: expense.id,
+                  });
+                  this.setState({ showDeleteModal: true });
+                }}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </Button>
+              <Modal
+                show={this.state.showDeleteModal}
+                onHide={(e) =>
+                  this.setState({ showDeleteModal: false })
+                }
+                size="md"
+                aria-labelledby="contained-modal-title-vcenter"
+                centered
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title id="contained-modal-title-vcenter">
+                    Delete expense record
+                  </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>Do you really want to delete this expense?</p>
+                  <Button
+                    color="danger"
+                    variant="contained"
+                    className="mt-1 mb-1"
+                    onClick={() => {
+                      this.deleteExpense(this.state.activeExpenseId);
+                      this.setState({ showDeleteModal: false });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Modal.Body>
+              </Modal>
+            </td>
+          </tr>
+        );
+      })
+    )
+  }
+
   render() {
     return (
       <div
@@ -378,68 +445,7 @@ export class ExpenseManager extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.expenseData.length > 0 ? (
-                this.state.expenseData.map((expense) => {
-                  return (
-                    <tr key={expense.id}>
-                      <td align="center">
-                        <Badge variant="primary"> {expense.id}</Badge>
-                      </td>
-                      <td style={{ textTransform: "capitalize" }}>
-                        {expense.description}
-                      </td>
-                      <td>₹ {expense.amount}</td>
-                      <td>
-                        {moment(expense.date).format("D MMMM YYYY ")}
-                      </td>
-                      <td align="center">
-                        <Button
-                          color="secondary"
-                          variant="contained"
-                          className="mt-1 mb-1"
-                          onClick={(e) => {
-                            this.setState({
-                              activeExpenseId: expense.id,
-                            });
-                            this.setState({ showDeleteModal: true });
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </Button>
-                        <Modal
-                          show={this.state.showDeleteModal}
-                          onHide={(e) =>
-                            this.setState({ showDeleteModal: false })
-                          }
-                          size="md"
-                          aria-labelledby="contained-modal-title-vcenter"
-                          centered
-                        >
-                          <Modal.Header closeButton>
-                            <Modal.Title id="contained-modal-title-vcenter">
-                              Delete expense record
-                            </Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body>
-                            <p>Do you really want to delete this expense?</p>
-                            <Button
-                              color="danger"
-                              variant="contained"
-                              className="mt-1 mb-1"
-                              onClick={() => {
-                                this.deleteExpense(this.state.activeExpenseId);
-                                this.setState({ showDeleteModal: false });
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </Modal.Body>
-                        </Modal>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : ""}
+             {this.renderExpenses()}
             </tbody>
           </table>
              )}

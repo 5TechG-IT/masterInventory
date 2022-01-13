@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Row, Col, Modal, Card, Table as Tbl } from "react-bootstrap";
+import { faPlusCircle, faSyncAlt, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { ToastContainer } from "react-toastify";
 
 //Bootstrap and jQuery libraries
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -36,7 +38,8 @@ export default class NonbillHistory extends Component {
       showUpdateModel: false,
       activeBillId: null,
       activePaid: 0,
-
+      startDate: null,
+      endDate: null,
       aadharCard: null,
       adjustment: 0,
       balance: 0,
@@ -76,6 +79,43 @@ export default class NonbillHistory extends Component {
         console.log("deliveryMemo list fetch error: ", err);
       });
   };
+
+  refreshProducts() {
+    console.log("hi")
+    var data = this.state.billList;
+    console.log(data)
+
+    var startDate = this.state.startDate;
+    var endDate = this.state.endDate;
+
+    var result = data.filter(function (obj) {
+      return obj.date >= startDate && obj.date <= endDate;
+    })
+    console.log(result)
+    this.setState({ billList: result });  
+    // // init data table
+    // this.initializeDataTable();
+
+  }
+
+  clearFilter(){
+    let url = API_URL;
+    const query = `SELECT gb.* , p.name as pname FROM gstBill as gb inner join party as p where gb.partyId = p.id AND gb.status=1 ORDER BY gb.id DESC ;`;
+    let data = { crossDomain: true, crossOrigin: true, query: query };
+    axios
+        .post(url, data)
+        .then((res) => {
+            console.log("bill: ", res.data);
+            this.setState({ billList: res.data });
+
+            // init data table
+            this.initializeDataTable();
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.log("deliveryMemo list fetch error: ", err);
+        });
+};
 
   fetchBillItemList = () => {
     let url = API_URL;
@@ -522,10 +562,10 @@ export default class NonbillHistory extends Component {
                           </td>
                         </tr>
                         <tr>
-                          <td colSpan="4">Grand Total</td>
+                          <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
                           <td></td>
                           <td></td>
-                          <td colSpan="2">{this.state.total}</td>
+                          <td colSpan="2" style={{fontWeight:'bold'}}>{this.state.total}</td>
                         </tr>
                       </tbody>
                     ) : (
@@ -536,6 +576,7 @@ export default class NonbillHistory extends Component {
                       </tbody>
                     )}
                   </Tbl>
+                  <p className="text-center" style={{marginBottom:'-1em',marginTop:'1em',fontSize:'10px'}}>developed by 5TechG Lab | M:7028828831/9172227004</p>  
                 </Card.Body>
                 {/* <Card.Footer className="pb-3 mb-0">
                   <Row>
@@ -592,6 +633,63 @@ export default class NonbillHistory extends Component {
   render() {
     return (
       <div>
+        <div className="row">
+          <form autoComplete="off">
+
+
+            <div className="row ml-4 mt-4">
+
+              <TextField
+                id="Start Date"
+                label="Date From"
+                variant="outlined"
+                type="date"
+                className="mr-2"
+                required={true}
+                size="small"
+                value={this.state.startDate}
+                onChange={(e) =>
+                  this.setState({ startDate: e.target.value })
+                }
+              />
+
+
+              <TextField
+                id="End date"
+                label="Date To"
+                variant="outlined"
+                type="date"
+                className="mr-2"
+                size="small"
+                value={this.state.endDate}
+                onChange={(e) =>
+                  this.setState({ endDate: e.target.value })
+                }
+              />
+              <Button
+                color="primary"
+                variant="contained"
+                className="mb-3 ml-2"
+                onClick={(e) => { this.refreshProducts() }}
+              >
+                <FontAwesomeIcon icon={faSyncAlt} size="2x" />
+              </Button>
+              <Button
+                color="secondary"
+                variant="contained"
+                className="ml-3 p-1"
+                size="small"
+                onClick={(e) => { this.clearFilter() }}
+              >
+                <FontAwesomeIcon
+                  icon={faWindowClose}
+                  size="2x"
+                />
+              </Button>
+            </div>
+          </form>
+          <ToastContainer />
+        </div>
         <Row>
           <Col
             md="12"
