@@ -11,11 +11,8 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 import { toast } from "react-toastify";
-
 import moment from "moment";
-
 import { Button, TextField } from "@material-ui/core";
-
 // font awasome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -68,28 +65,23 @@ export default class NonbillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("bill: ", res.data);
         this.setState({ billList: res.data });
 
         // init data table
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("deliveryMemo list fetch error: ", err);
       });
   };
 
   refreshProducts() {
     var data = this.state.billList;
-    console.log(data)
-
     var startDate = this.state.startDate;
     var endDate = this.state.endDate;
 
     var result = data.filter(function (obj) {
       return obj.date >= startDate && obj.date <= endDate;
     })
-    console.log(result)
     this.setState({ billList: result });
   }
 
@@ -100,7 +92,6 @@ export default class NonbillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("bill: ", res.data);
         this.setState({ billList: res.data });
 
         // init data table
@@ -108,7 +99,6 @@ export default class NonbillHistory extends Component {
         window.location.reload();
       })
       .catch((err) => {
-        console.log("deliveryMemo list fetch error: ", err);
       });
   };
 
@@ -119,14 +109,12 @@ export default class NonbillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("bill list data: ", res.data);
         this.setState({ itemsList: res.data });
 
         // init data table
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("bill list fetch error: ", err);
       });
   };
 
@@ -137,13 +125,11 @@ export default class NonbillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("deleted status data: ", res.data);
         toast.success("Record deleted successfully");
         window.location.reload();
         this.fetchBillList();
       })
       .catch((err) => {
-        console.log("record delete error: ", err);
       });
   }
 
@@ -175,7 +161,6 @@ export default class NonbillHistory extends Component {
         this.fetchBillList();
       })
       .catch((err) => {
-        console.log(err);
       });
   }
 

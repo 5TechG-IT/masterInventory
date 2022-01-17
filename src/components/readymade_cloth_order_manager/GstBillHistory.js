@@ -3,7 +3,6 @@ import { Row, Col, Modal, Card, Table as Tbl } from "react-bootstrap";
 import { faPlusCircle, faSyncAlt, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer } from "react-toastify";
 
-
 //Bootstrap and jQuery libraries
 import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery/dist/jquery.min.js";
@@ -40,7 +39,6 @@ export default class GstBillHistory extends Component {
       activeBillId: null,
       activePaid: 0,
       discount: null,
-
       startDate: moment(new Date()).format("YYYY-MM-DD"),
       endDate: moment(new Date()).format("YYYY-MM-DD"),
       adjustment: 0,
@@ -68,19 +66,17 @@ export default class GstBillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("bill: ", res.data);
         this.setState({ billList: res.data });
 
         // init data table
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("deliveryMemo list fetch error: ", err);
       });
   };
 
   refreshProducts() {
-    
+
     var data = this.state.billList;
     var startDate = this.state.startDate;
     var endDate = this.state.endDate;
@@ -88,28 +84,25 @@ export default class GstBillHistory extends Component {
     var result = data.filter(function (obj) {
       return obj.date >= startDate && obj.date <= endDate;
     })
-    console.log(result)
-    this.setState({ billList: result });  
+    this.setState({ billList: result });
   }
 
-  clearFilter(){
+  clearFilter() {
     let url = API_URL;
     const query = `SELECT gb.* , p.name as pname FROM gstBill as gb inner join party as p where gb.partyId = p.id AND gb.status=1 ORDER BY gb.id DESC ;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
-        .post(url, data)
-        .then((res) => {
-            console.log("bill: ", res.data);
-            this.setState({ billList: res.data });
+      .post(url, data)
+      .then((res) => {
+        this.setState({ billList: res.data });
 
-            // init data table
-            this.initializeDataTable();
-            window.location.reload();
-        })
-        .catch((err) => {
-            console.log("deliveryMemo list fetch error: ", err);
-        });
-};
+        // init data table
+        this.initializeDataTable();
+        window.location.reload();
+      })
+      .catch((err) => {
+      });
+  };
 
   fetchBillItemList = () => {
     let url = API_URL;
@@ -118,14 +111,12 @@ export default class GstBillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("bill list data: ", res.data);
         this.setState({ itemsList: res.data });
 
         // init data table
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("bill list fetch error: ", err);
       });
   };
 
@@ -136,12 +127,10 @@ export default class GstBillHistory extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("deleted status data: ", res.data);
         toast.success("Record deleted successfully");
         this.fetchBillList();
       })
       .catch((err) => {
-        console.log("record delete error: ", err);
       });
   }
 
@@ -173,11 +162,10 @@ export default class GstBillHistory extends Component {
         this.fetchBillList();
       })
       .catch((err) => {
-        console.log(err);
       });
   }
 
- 
+
 
   componentDidUpdate() {
     const title = "Party data -" + moment().format("DD-MMMM-YYYY");
@@ -489,19 +477,8 @@ export default class GstBillHistory extends Component {
                       </h6>
                     </Col>
                   </Row>
-                  {/* <Row>
-                    <Col md={6}>
-                      <p>
-                        <b>
-                          vehicle No: {this.state.vehicleNo}
-                        </b>
-                      </p>
-                    </Col>
-
-                  </Row> */}
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
-                  {/* Order overview */}
                   <Tbl striped bordered hover size="sm">
                     <thead>
                       <tr>
@@ -519,15 +496,6 @@ export default class GstBillHistory extends Component {
                       <tbody>
                         {this.state.itemsList.map((item, index) => {
                           return (
-                            // <tr key={"" + item.particularValue.title}>
-                            //   <td>{item.particularValue.title} </td>
-                            // <tr key={"" + item.particular}>
-                            //   <td>{item.particular} </td>
-                            //   <td>{item.batch}</td>
-                            //   <td>{item.quantity}</td>
-                            //   <td>{item.rate}</td>
-                            //   <td>{item.amount}</td>
-                            // </tr>
                             <tr key={"" + item.particular}>
                               <td>{item.particular} </td>
                               <td>{item.description}</td>
@@ -555,10 +523,10 @@ export default class GstBillHistory extends Component {
                         </tr>
 
                         <tr>
-                          <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
+                          <td colSpan="4" style={{ fontWeight: 'bold' }}>Grand Total</td>
                           <td></td>
                           <td></td>
-                          <td colSpan="2" style={{fontWeight:'bold'}}>{this.state.total}</td>
+                          <td colSpan="2" style={{ fontWeight: 'bold' }}>{this.state.total}</td>
                         </tr>
                       </tbody>
                     ) : (
@@ -569,52 +537,8 @@ export default class GstBillHistory extends Component {
                       </tbody>
                     )}
                   </Tbl>
-                  <p className="text-center" style={{marginBottom:'-1em',marginTop:'1em',fontSize:'10px'}}>developed by 5TechG Lab | M:7028828831/9172227004</p>
+                  <p className="text-center" style={{ marginBottom: '-1em', marginTop: '1em', fontSize: '10px' }}>developed by 5TechG Lab | M:7028828831/9172227004</p>
                 </Card.Body>
-                {/* <Card.Footer className="pb-3 mb-0">
-                  <Row>
-                    <Col md={4}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        GSTIN No.: <b>27AOLPK5202K1ZU</b> <br />
-                        Date: 28/06/2017
-                      </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        State : Maharashtra Code: 27
-                      </h6>
-                    </Col>
-                    <div className="col-4 col-md-4 text-center">
-                      <img
-                        src="/Assets/QrCode1.jpg"
-                        height="100"
-                        width="100"
-                      />
-                    </div>
-                    <Col md={4}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Bank A/c: <b>16153011000070 Bank of India</b>
-                      </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        IFSC Code : BKID0001615
-                      </h6>
-                    </Col>
-                  </Row>
-                </Card.Footer> */}
               </Card>
             </Col>
           </Row>
@@ -667,13 +591,13 @@ export default class GstBillHistory extends Component {
               >
                 <FontAwesomeIcon icon={faSyncAlt} size="2x" />
               </Button>
-              
+
               <Button
                 color="secondary"
                 variant="contained"
                 className="ml-3 p-1"
                 size="small"
-                style={{height:'40px'}}
+                style={{ height: '40px' }}
                 onClick={(e) => { this.clearFilter() }}
               >
                 <FontAwesomeIcon

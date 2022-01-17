@@ -130,11 +130,9 @@ export default class BillManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("id+name data: ", res.data);
         this.setState({ partyList: res.data });
       })
       .catch((err) => {
-        console.log("id + name fetch error: ", err);
       });
   }
 
@@ -146,13 +144,11 @@ export default class BillManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("latest id data: ", res.data);
         this.setState({
           billId: (res.data[0] != null ? res.data[0]["id"] : 0) + 1,
         });
       })
       .catch((err) => {
-        console.log("latest id data fetch error: ", err);
       });
   };
 
@@ -230,7 +226,6 @@ export default class BillManager extends Component {
       this.calculateGrandTotal
 
     );
-    console.log(discountAmount)
   };
 
   calculateGrandTotal = () => {
@@ -278,7 +273,6 @@ export default class BillManager extends Component {
     }
 
     this.setState({ addedItems: items });
-    console.log(this.state.addedItems);
 
     // update total & balance
     let total =
@@ -329,10 +323,8 @@ export default class BillManager extends Component {
       axios
         .post(url, data)
         .then((res) => {
-          console.log("insert billList successfull, index: ", index);
         })
         .catch((err) => {
-          console.log("failed to insert billList, error: ", err);
         });
     });
   };
@@ -348,11 +340,8 @@ export default class BillManager extends Component {
         this.setState({
           newId: (res.data[0].newId)
         });
-        console.log(res.data[0].newId);
-
       })
       .catch((err) => {
-        console.log("New Id fetch error: ", err);
       });
   }
 
@@ -362,10 +351,8 @@ export default class BillManager extends Component {
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("insert response: ", res.data.insertId);
       })
       .catch((err) => {
-        console.log("failed to insert ledger, error: ", err);
       });
   };
 
@@ -375,12 +362,9 @@ export default class BillManager extends Component {
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("insert party successful");
-        console.log("insert response: ", res.data.insertId);
         this.setState({ partyId: res.data.insertId }, this.saveBill);
       })
       .catch((err) => {
-        console.log("failed to insert party, error: ", err);
       });
   };
 
@@ -479,7 +463,6 @@ export default class BillManager extends Component {
   };
 
   handleSavePrint = (e) => {
-    console.log("in handle save print");
     // 1. handle save
     this.handleSave();
   };
@@ -495,11 +478,9 @@ export default class BillManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("product data: ", res.data);
         this.setState({ productData: res.data });
       })
       .catch((err) => {
-        console.log(err);
       });
   }
 
@@ -522,7 +503,6 @@ export default class BillManager extends Component {
         }, 2000);
       })
       .catch((err) => {
-        console.log(err);
       });
   }
 
@@ -737,11 +717,15 @@ export default class BillManager extends Component {
                 />
               )}
               onChange={(event, value) => {
-                console.log(value);
                 if (value != null && value.length > 2) {
                   this.setState({
                     partyId: value.split(", ")[0],
                     partyName: value.split(", ")[1],
+                    address: this.state.partyList.find(
+                      (party) =>
+                          party.id == value.split(", ")[0]
+                  )?.address,
+                  
                   });
                 } else {
                   this.setState({
@@ -769,13 +753,8 @@ export default class BillManager extends Component {
             label="Address"
             variant="outlined"
             className="mr-2"
-            value={
-              this.state.partyId
-                ? this.state.partyList.find(
-                  (party) => party.id == this.state.partyId
-                )?.address
-                : this.state.address || ""
-            }
+            value={this.state.address || ""}
+
             onChange={(e) => this.setState({ address: e.target.value })}
             disabled={!!this.state.partyId}
             size="small"
@@ -899,7 +878,6 @@ export default class BillManager extends Component {
                     />
                   )}
                   onChange={(event, value) => {
-                    console.log(value);
                     if (value != null && value.length > 2) {
                       this.setState({
                         productId: Number(value.split(", ")[0]),

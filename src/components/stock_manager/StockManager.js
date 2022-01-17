@@ -54,7 +54,6 @@ export default class StockManager extends Component {
       activePaid: null,
       activePending: null,
       totalBalance: 0,
-
       productCount: null,
       LedgerData: null,
       isLoadingLedger: false,
@@ -62,20 +61,6 @@ export default class StockManager extends Component {
     };
   }
 
-  // fetchProductCount() {
-  //   const query = `SELECT * FROM stockCount;`;
-  //   let data = { crossDomain: true, crossOrigin: true, query: query };
-  //   axios
-  //     .post(API_URL, data)
-  //     .then((res) => {
-  //       console.log("stockCount data: ", res.data);
-  //       this.setState({ productCount: res.data });
-  //       this.initializeDataTable();
-  //     })
-  //     .catch((err) => {
-  //       console.log("stockCount data fetch error: ", err);
-  //     });
-  // }
 
   fetchProductData() {
     const query = `SELECT * FROM products WHERE status = 1;`;
@@ -83,12 +68,10 @@ export default class StockManager extends Component {
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("products data: ", res.data);
         this.setState({ products: res.data });
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("products data fetch error: ", err);
       });
   }
 
@@ -99,19 +82,16 @@ export default class StockManager extends Component {
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("BTledger data: ", res.data);
         this.setState({ LedgerData: res.data, isLoadingLedger: false });
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("BTledger data fetch error: ", err);
         this.setState({ isLoadingLedger: false });
       });
   };
 
   handleUpdateSubmit(e) {
     let url = API_URL;
-
     const query = `UPDATE stockLedger SET paid = paid + ${this.state.activePaid}, pending = pending - ${this.state.activePaid} WHERE id=${this.state.activeRecordId};`;
     let data = {
       crossDomain: true,
@@ -127,26 +107,9 @@ export default class StockManager extends Component {
         }, 2000);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error("Record details update error");
       });
   }
-
-  // updateProductCount(productId, quantity) {
-  //   const query = `UPDATE stockCount SET quantity = quantity - ${quantity}  WHERE productId=${productId};`;
-  //   let data = { crossDomain: true, crossOrigin: true, query: query };
-  //   axios
-  //     .post(API_URL, data)
-  //     .then((res) => {
-  //       console.log("count update status data: ", res.data);
-  //       console.log("count updated successfully");
-  //       setTimeout(() => {
-  //         this.refreshLedger();
-  //       }, 2000);
-  //     })
-  //     .catch((err) => {
-  //       console.log("record delete error: ", err);
-  //     });
-  // }
 
   deleteRecord(id, productId, quantity) {
     const query = `UPDATE stockLedger SET status = 0  WHERE id=${id};`;
@@ -154,8 +117,6 @@ export default class StockManager extends Component {
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("deleted status data: ", res.data);
-        console.log("record deleted successfully");
         toast.error("Record deleted successfully");
         this.updateProductCount(productId, quantity);
         setTimeout(() => {
@@ -163,7 +124,6 @@ export default class StockManager extends Component {
           }, 2000);
       })
       .catch((err) => {
-        console.log("record delete error: ", err);
       });
   }
 
@@ -174,7 +134,6 @@ export default class StockManager extends Component {
   componentDidMount() {
     this.fetchProductData();
     this.fetchLedgerData();
-    // this.fetchProductCount();
   }
 
   componentDidUpdate() {
@@ -217,7 +176,6 @@ export default class StockManager extends Component {
 
     return Ledger.map((record) => {
       let color = record.pending > 0 ? 'red' : '';
-      // extract date only
       last_modified = moment(record["last_modified"]).format(
         "DD/MM/YYYY HH:MM"
       );
@@ -324,8 +282,14 @@ export default class StockManager extends Component {
 
   initializeDataTable() {
     const title = "Stock data-" + moment().format("DD/MM/YYYY");
+    $(document).ready(function() {
     $("#ledger_table").DataTable({
       destroy: true,
+      keys: true,
+      rowReorder: {
+        selector: 'td:nth-child(2)'
+    },
+    responsive: true,
       dom:
         "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
         "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
@@ -351,6 +315,7 @@ export default class StockManager extends Component {
         },
       ],
     });
+  } );
   }
 
   render() {
@@ -364,7 +329,6 @@ export default class StockManager extends Component {
 
         <Row className="ml-0 mr-0">
           <Col md="12" className="p-0 m-0 measure1">
-            {/* <TableContainer component={Paper} style={{ maxHeight: "79vh" }}> */}
             {this.state.isLoadingLedger && (
               <Box
                 width="100%"
@@ -379,7 +343,7 @@ export default class StockManager extends Component {
             {!this.state.isLoadingLedger && (
               <table
                 id="ledger_table"
-                className="display"
+                className="display nowrap"
                 style={{ width: "100%" }}
               >
                 <thead>
@@ -397,7 +361,6 @@ export default class StockManager extends Component {
                 <TableBody>{this.renderLedgerData()}</TableBody>
               </table>
             )}
-            {/* </TableContainer> */}
           </Col>
         </Row>
       </div>
