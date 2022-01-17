@@ -45,9 +45,8 @@ class MonthlyCalander extends Component {
     if (!this.state.workerId) return null;
     console.log("month: ", this.state.month);
     let url = API_URL;
-    const query = `SELECT *,DAY(date) as day, MONTH(date) as month FROM presenty WHERE workerId=${
-      this.state.workerId
-    } HAVING month=${this.state.month } ;`;
+    const query = `SELECT *,DAY(date) as day, MONTH(date) as month FROM presenty WHERE workerId=${this.state.workerId
+      } HAVING month=${this.state.month} ;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -58,11 +57,9 @@ class MonthlyCalander extends Component {
           presentyDataObj[record.day] = record;
         });
 
-        console.log("presenty data obj: ", presentyDataObj);
         this.setState({ presentyData: presentyDataObj });
       })
       .catch((err) => {
-        console.log("presenty data fetch error: ", err);
       });
   };
 
@@ -71,8 +68,8 @@ class MonthlyCalander extends Component {
     const totalDays = [0, 2, 4, 6, 7, 9, 11].includes(this.props.month)
       ? 31
       : [3, 5, 8, 10].includes(this.props.month)
-      ? 30
-      : 28;
+        ? 30
+        : 28;
 
     let grid = Array.from({ length: 42 }, (x) => 0);
     let firstDate = new Date();
@@ -93,21 +90,18 @@ class MonthlyCalander extends Component {
     let url = API_URL;
     let date = new Date();
     date.setDate(this.state.newDay);
-    const query = `INSERT INTO presenty(status, reason, workerId, date) values(${
-      this.state.newStatus
-    }, "${this.state.newReason}", ${this.state.workerId}, "${moment(
-      date
-    ).format("YYYY-MM-DD")}");`;
+    const query = `INSERT INTO presenty(status, reason, workerId, date) values(${this.state.newStatus
+      }, "${this.state.newReason}", ${this.state.workerId}, "${moment(
+        date
+      ).format("YYYY-MM-DD")}");`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
       .then((res) => {
-        console.log("presenty added response: ", res.data);
         this.fetchPresentyData();
         this.setState({ showNewModel: false });
       })
       .catch((err) => {
-        console.log("presenty adding error: ", err);
       });
   }
 
@@ -122,13 +116,11 @@ class MonthlyCalander extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("presenty updated response: ", res.data);
         this.fetchPresentyData();
         this.setState({ showUpdateModel: false });
         window.location.reload();
       })
       .catch((err) => {
-        console.log("presenty updating error: ", err);
       });
   }
 
@@ -156,7 +148,6 @@ class MonthlyCalander extends Component {
               <Row>
                 <Col>
                   <FormControl
-                    // variant="filled"
                     variant="outlined"
                     className="mb-3"
                     style={{ minWidth: "180px" }}
@@ -239,7 +230,6 @@ class MonthlyCalander extends Component {
               <Row>
                 <Col>
                   <FormControl
-                    // variant="filled"
                     variant="outlined"
                     className="mb-3"
                     style={{ minWidth: "180px" }}
@@ -317,8 +307,8 @@ class MonthlyCalander extends Component {
                         this.state.presentyData[day].status == 1
                           ? "lightgreen"
                           : this.state.presentyData[day]?.status == 2
-                          ? "tomato"
-                          : "orange"
+                            ? "tomato"
+                            : "orange"
                       }
                       onClick={() => {
                         this.setState({
@@ -345,7 +335,6 @@ class MonthlyCalander extends Component {
                         });
                       }}
                       border={day == new Date().getDate() ? 2 : ""}
-                      // borderColor=""
                     >
                       {day}
                     </Box>

@@ -19,7 +19,7 @@ import VendorManager from "../vendor_manager/VendorManager";
 import LedgerManager from "../ledger_manager/LedgerManager";
 import WorkerManager from "../worker_manager/WorkerManager";
 import StockManager from "../stock_manager/StockManager";
-import Dashboard from "../dashboard/Dashboarrd";
+import Dashboard from "../dashboard/Dashboard";
 import PresentyManager from "../presenty_manager/PresentyManager";
 
 function Main(props) {
@@ -46,11 +46,18 @@ function Main(props) {
 				{/* <!-- Navbar --> */}
 				<nav class="main-header navbar navbar-expand navbar-white navbar-light" style={{ backgroundColor: '#343a40' }}>
 					{/* <!-- Left navbar links --> */}
-					{/* <ul class="navbar-nav">
-						<li class="nav-item">
-							<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-						</li>
-					</ul> */}
+					<ul className="navbar-nav">
+                    {/* <li className="nav-item">
+                        <a
+                            className="nav-link"
+                            data-widget="pushmenu"
+                            href="#"
+                            role="button"
+                        >
+                            <i className="fas fa-bars" style={{color:'white'}} />
+                        </a>
+                    </li> */}
+                </ul>
 
 					{/* <!-- Right navbar links --> */}
 					<ul class="navbar-nav ml-auto">

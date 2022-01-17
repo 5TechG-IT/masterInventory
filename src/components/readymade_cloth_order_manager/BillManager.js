@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ReactToPrint, { PrintContextConsumer } from "react-to-print";
 import moment from "moment";
-// import libarty from "../../img/libarty.png";
 
 import { Row, Col, Card, Button as Btn1, Modal, Badge, Table as Tbl } from "react-bootstrap";
 import {
@@ -60,7 +59,6 @@ export default class BillManager extends Component {
       code: null,
       companyType: 1,
       discount: null,
-      // vehicleNo: "",
 
       PaymentMode: [],
       priceMode: 1,
@@ -100,7 +98,6 @@ export default class BillManager extends Component {
 
       latestInsertId: 0,
 
-      // party modal
 
       showAddModal: false,
       showUpdateModel: false,
@@ -120,8 +117,6 @@ export default class BillManager extends Component {
     };
   }
 
-
-
   maxLengthCheck = (object) => {
     if (object.target.value.length > object.target.maxLength) {
       object.target.value = object.target.value.slice(0, object.target.maxLength)
@@ -130,7 +125,6 @@ export default class BillManager extends Component {
 
   getIdPartyList() {
     let url = API_URL;
-    // const query = `SELECT CONCAT(id, ', ', name) AS name, address FROM party;`;
     const query = `SELECT id, name, address, mobile FROM party WHERE status=1;`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
@@ -253,7 +247,6 @@ export default class BillManager extends Component {
 
   addItems = () => {
     if (!this.state.productName || !this.state.rate) return;
-    // let items = this.state.itemList;
     let items = this.state.addedItems;
     const ifExists = items.find(
       (item) => item.productName === this.state.productName
@@ -283,31 +276,19 @@ export default class BillManager extends Component {
         amount: this.state.rate * this.state.partQty,
       });
     }
-    // items.push({
-    //     particular: this.state.particular,
-    //     mark: this.state.mark,
-    //     totalBoxes: this.state.totalBoxes,
-    //     weightPerBox: this.state.weightPerBox,
-    //     weight: this.state.weight,
-    //     rate: this.state.rate,
-    //     amount: this.state.amount,
-    // });
 
     this.setState({ addedItems: items });
     console.log(this.state.addedItems);
 
     // update total & balance
-    // let total = Number(this.state.total) + Number(this.state.amount);
     let total =
       Number(this.state.total) + Number(this.state.rate * this.state.partQty);
     this.setState({ total: total }, this.calculateTaxes);
     let balance = total + Number(this.state.advance);
     this.setState({ balance: balance });
-    // this.calculateTaxes();
   };
 
   deleteItem = (index) => {
-    // let itemList = this.state.itemList;
     let itemList = this.state.addedItems;
 
     // update total & balance
@@ -316,11 +297,6 @@ export default class BillManager extends Component {
     this.setState({ total: total }, this.calculateTaxes);
     this.setState({ balance: balance });
 
-    // remove element
-    // let updatedList = itemList.filter((item, _index) => {
-    //     if (index !== _index) return item;
-    // });
-    // this.setState({ itemList: updatedList });
     let updatedList = itemList.filter((item, _index) => {
       if (index !== _index) return item;
     });
@@ -336,7 +312,6 @@ export default class BillManager extends Component {
   insertBillList = () => {
     let url = API_URL;
     const newDate = moment(new Date()).format("YYYY-MM-DD");
-    // 1.  insert into deliveryMemoList
     this.state.addedItems.map((item, index) => {
       const query = `INSERT INTO billList(billType, billId, partyId, particular, description,discount,  batch, quantity, rate, amount) VALUES(
           ${this.state.billType},
@@ -350,7 +325,6 @@ export default class BillManager extends Component {
           ${item.rate}, 
           ${item.amount}
         )`;
-      console.log(query)
       let data = { crossDomain: true, crossOrigin: true, query: query };
       axios
         .post(url, data)
@@ -371,8 +345,6 @@ export default class BillManager extends Component {
       .post(url, data)
       .then((res) => {
         let data = [];
-
-        // this.setState(res.data[0].newId);
         this.setState({
           newId: (res.data[0].newId)
         });
@@ -385,14 +357,11 @@ export default class BillManager extends Component {
   }
 
   insertLedgerRecord = () => {
-    // 1.  insert into ledger
     const query = `INSERT INTO ledger(party_id, particular, total, memo_id) VALUES(${this.state.partyId}, 'reference memo id: ${this.state.latestInsertId}', ${this.state.total}, ${this.state.latestInsertId})`;
-
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(API_URL, data)
       .then((res) => {
-        console.log("insert ledger successful");
         console.log("insert response: ", res.data.insertId);
       })
       .catch((err) => {
@@ -402,7 +371,6 @@ export default class BillManager extends Component {
 
   insertNewPartyAndSave = () => {
     const query = `INSERT INTO party (name, address, mobile) values("${this.state.newPartyName}", "${this.state.address}", "${this.state.mobileNumber}")`;
-    console.log(query)
     const data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(API_URL, data)
@@ -441,7 +409,6 @@ export default class BillManager extends Component {
         ${this.state.paid},
         ${this.state.priceMode}
         )`;
-      console.log(query)
     } else if (this.state.billType === 2) {
       query = `INSERT INTO nonGstBill (partyId, partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid, paymentMode) values(
         ${this.state.partyId},
@@ -463,7 +430,6 @@ export default class BillManager extends Component {
         ${this.state.paid},
         ${this.state.priceMode}
         )`;
-      console.log(query)
     }
     else {
       query = `INSERT INTO quotations (partyId, partyName, receiverName, date, mobileNo,companyType, code, total,discount, balance, status , last_modified , paid, paymentMode) values(
@@ -486,7 +452,6 @@ export default class BillManager extends Component {
         ${this.state.paid},
         ${this.state.priceMode}
         )`;
-      console.log(query)
     }
 
     let data = { crossDomain: true, crossOrigin: true, query: query };
@@ -495,7 +460,6 @@ export default class BillManager extends Component {
       .then((res) => {
         toast.success("Generated Bill successfully");
         this.setState({ billId: res.data.insertId }, this.insertBillList);
-        // window.location.reload();
       })
       .catch((err) => {
         toast.error("Failed to Generate Bill ");
@@ -544,7 +508,6 @@ export default class BillManager extends Component {
     let url = API_URL;
 
     const query = `INSERT INTO party(name, mobile,aadharNo, address,city, type) VALUES('${this.state.activePartyName}', ${this.state.activePartyMobile},'${this.state.activePartyAadharNo}' ,'${this.state.activePartyAddress}','${this.state.activePartyCity}', ${this.state.activePartyType})`;
-    console.log(query)
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -578,7 +541,6 @@ export default class BillManager extends Component {
   render() {
     return (
       <form className="mb-5" style={{ margin: '10px' }} onSubmit={(e) => e.preventDefault()}>
-        {/* Input Party Details */}
         <div
           class="btn-group row"
           role="group"
@@ -594,17 +556,8 @@ export default class BillManager extends Component {
           >
             add new party
           </Button>
-          {/* <Button
-            color="primary"
-            variant="contained"
-            className="mt-1 mr-1 mb-3 ml-5"
-            onClick={this.refreshParties}
-          >
-            <FontAwesomeIcon icon={faSyncAlt} size="2x" />
-          </Button> */}
         </div>
 
-        {/* {this.renderUpdatePartyModal()} */}
         <Modal
           show={this.state.showAddModal}
           onHide={(e) =>
@@ -774,7 +727,6 @@ export default class BillManager extends Component {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  // label="party name"
                   label="Party name"
                   variant="outlined"
                   size="small"
@@ -808,7 +760,6 @@ export default class BillManager extends Component {
             className={"mr-2"}
             value={this.state.receiverName}
             onChange={(e) => this.setState({ receiverName: e.target.value })}
-            // required="true"
 
             size="small"
           />
@@ -826,7 +777,6 @@ export default class BillManager extends Component {
                 : this.state.address || ""
             }
             onChange={(e) => this.setState({ address: e.target.value })}
-            // required="true"
             disabled={!!this.state.partyId}
             size="small"
           />
@@ -854,11 +804,10 @@ export default class BillManager extends Component {
                 className="ToggleClassBtnRadio"
               >
                 {radio.name}
-                {/* {setpriceModeName(radio.name)} */}
               </ToggleButton>
             ))}
           </ButtonGroup>
-            
+
 
           <TextField
             id="mobileNo"
@@ -867,7 +816,6 @@ export default class BillManager extends Component {
             className="mr-2 mt-1"
             value={this.state.mobileNumber}
             onChange={(e) => this.setState({ mobileNumber: e.target.value })}
-            // required="true"
             size="small"
           />
 
@@ -903,34 +851,9 @@ export default class BillManager extends Component {
             className={"mr-2 mt-1 " + (this.state.billType === 2 ? 'd-none' : '')}
             value={this.state.gstin}
             onChange={(e) => this.setState({ gstin: e.target.value })}
-            // required="true"
 
             size="small"
           />
-
-          {/* <FormControl
-            variant="filled"
-            className="mr-2 mb-2"
-            style={{ minWidth: "180px" }}
-            size="small"
-          >
-            <InputLabel id="demo-simple-select-outlined-label">
-              Company Type
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              onChange={(e) =>
-                this.setState({ companyType: e.target.value })
-              }
-              name="companyType"
-              value={this.state.companyType}
-              size="small"
-            >
-              <MenuItem value={1}>WESTERN | auto parts and accessories</MenuItem>
-              <MenuItem value={2}>WESTERN | Motors</MenuItem>
-            </Select>
-          </FormControl> */}
 
           <TextField
             id="code"
@@ -939,7 +862,6 @@ export default class BillManager extends Component {
             className="mr-2 mt-1"
             value={this.state.code}
             onChange={(e) => this.setState({ code: e.target.value })}
-            // required="true"
             size="small"
           />
 
@@ -950,42 +872,13 @@ export default class BillManager extends Component {
             className="mr-2 mt-1 mb-3"
             value={this.state.paid}
             onChange={(e) => this.setState({ paid: e.target.value })}
-            // required="true"
             size="small"
           />
-
-          {/* End of Input Party Details */}
 
           <hr />
 
           <Row>
             <Col>
-
-              {/* <FormControl style={{ minWidth: "250px" }} className="mr-2 mb-2 smt-0">
-              <Autocomplete
-                id="free-solo-demo"
-                freeSolo
-                options={
-                  this.state.productData != null
-                    ? this.state.productData.map((item) => item.id + "," + item.name)
-                    : []
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    // label="party name"
-                    label="Party name"
-                    variant="outlined"
-                    size="small"
-                    value={this.state.product}
-                  />
-                )}
-                onChange={(event, value) => {
-                  console.log(value);
-                  this.setState({ product: value });
-                }}
-              />
-            </FormControl> */}
 
               <FormControl style={{ minWidth: "250px" }} className="mr-2 mb-2 smt-0">
                 <Autocomplete
@@ -999,14 +892,10 @@ export default class BillManager extends Component {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      // label="party name"
                       label="Product name"
                       variant="outlined"
                       size="small"
                       value={this.state.productName}
-                    // onChange={(event) =>
-                    //   this.setState({ product: event.target.value })
-                    // }
                     />
                   )}
                   onChange={(event, value) => {
@@ -1015,11 +904,9 @@ export default class BillManager extends Component {
                       this.setState({
                         productId: Number(value.split(", ")[0]),
                         productName: value.split(", ")[1],
-                        //productDescription: value.split(", ")[2],
-                        // productPrice: value.split(", ")[4],
                       });
 
-                        this.fetchDescription(String(value.split(", ")[0]));
+                      this.fetchDescription(String(value.split(", ")[0]));
                       this.fetchRate(Number(value.split(", ")[0]));
 
                     } else {
@@ -1042,26 +929,12 @@ export default class BillManager extends Component {
                 className="mr-2 mt-1"
                 value={this.state.description}
                 onChange={(e) => this.setState({ description: e.target.value })}
-                // required="true"
 
                 required="true"
                 size="small"
                 type="text"
               />
             </Col>
-            {/* <Col>
-            <TextField
-              id="description"
-              label="Description"
-              variant="outlined"
-              className="mr-2 mt-1"
-              value={this.state.description}
-              onChange={(e) => this.setState({ description: e.target.value })}
-              required="true"
-              size="small"
-              type="text"
-            />
-          </Col> */}
             <Col>
               <TextField
                 id="batch"
@@ -1129,7 +1002,7 @@ export default class BillManager extends Component {
             </Col>
           </Row>
         </div>
-        <div className="mt-1 p-2 measure"  ref={(el) => (this.printComponentRef = el)}>
+        <div className="mt-1 p-2 measure" ref={(el) => (this.printComponentRef = el)}>
           <Row>
             <Col md={8} className="mx-auto">
               <Card className="mt-2 p-0">
@@ -1137,7 +1010,7 @@ export default class BillManager extends Component {
                   <div className="row">
                     <div className="col-2 col-md-2 text-center">
                       <img
-                        style={{marginLeft:'-1.5em'}}
+                        style={{ marginLeft: '-1.5em' }}
                         src="/Assets/patil.png"
                         height="200"
                         width="200"
@@ -1145,43 +1018,33 @@ export default class BillManager extends Component {
                     </div>
                     <div className="col-10">
                       <h5 className="text-center pb-0 mb-0">
-                        {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
-                        <h2><b>पाटील ऑटोमोबाईल्स</b></h2>
-                        <p>सेल्स । स्पेअर्स । सर्विस </p>
+                        <h2><b>MASTER INVENTORY</b></h2>
                       </h5>
                       <hr />
-                      <p className="text-center pb-0 mb-0">
-                      क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली . 
-                      </p>
-                      <p className="text-center">
-                      भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
-                              {/* <hr />
-                          email ID: test@gmail.com */}
-                      </p>
                     </div>
-                    </div>
-                    <hr />
+                  </div>
+                  <hr />
 
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <p>
-                        Invoice No. <b>{this.state.newId}</b>
-                      </p>
-                      <p>
-                        Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
-                      </p>
-                    </span>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <p>
+                      Invoice No. <b>{this.state.newId}</b>
+                    </p>
+                    <p>
+                      Date <b>{moment(new Date()).format("D / M / YYYY")}</b>
+                    </p>
+                  </span>
 
-                    <h5 className="text-center pb-0 mb-0">
-                      <b> {this.state.billType == 3 ? "QUOTATION" : "TAX INVOICE"}</b>
-                    </h5>
+                  <h5 className="text-center pb-0 mb-0">
+                    <b> {this.state.billType == 3 ? "QUOTATION" : "TAX INVOICE"}</b>
+                  </h5>
 
-                  
+
                 </Card.Header>
                 <Card.Body className="pb-3 mb-0">
                   <Row>
@@ -1215,7 +1078,6 @@ export default class BillManager extends Component {
                       >
                         Address:{" "}
                         <b>{this.state.address || this.state.activePartyAddress}</b>
-                        {/* Address: <b>{this.state.Address}</b> */}
                       </h6>
                     </Col>
                     <Col md={6}>
@@ -1248,10 +1110,7 @@ export default class BillManager extends Component {
                         GSTIN: <b>{this.state.gstin}</b>
                       </h6>
                     </Col>
-
-
                   </Row>
-
                   <Row>
                     <Col md={6}>
                       <h6
@@ -1272,22 +1131,9 @@ export default class BillManager extends Component {
                       </h6>
                     </Col>
                   </Row>
-                  {/* <Row>
-                    <Col md={6}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        
-                        Vehicle No: <b>{this.state.vehicleNo}</b>
-                      </h6>
-                    </Col>
-                  </Row> */}
                 </Card.Body>
                 <Card.Body className="m-0 pt-0">
-                  {/* Order overview */}
-                  <Tbl striped bordered hover size="sm">
+                  <Tbl striped bordered hover size="sm" >
                     <thead>
                       <tr>
                         <th>Particular</th>
@@ -1304,8 +1150,6 @@ export default class BillManager extends Component {
                       <tbody>
                         {this.state.addedItems.map((item, index) => {
                           return (
-                            // <tr key={"" + item.particularValue.title}>
-                            //   <td>{item.particularValue.title} </td>
                             <tr key={"" + item.productName}>
                               <td>{item.productName} </td>
                               <td>{item.description}</td>
@@ -1377,11 +1221,11 @@ export default class BillManager extends Component {
                         )}
 
                         <tr>
-                          <td colSpan="4" style={{fontWeight:'bold'}}>Grand Total</td>
+                          <td colSpan="4" style={{ fontWeight: 'bold' }}>Grand Total</td>
                           <td></td>
                           <td></td>
 
-                          <td colSpan="2" style={{fontWeight:'bold'}}>{this.state.grandTotal}</td>
+                          <td colSpan="2" style={{ fontWeight: 'bold' }}>{this.state.grandTotal}</td>
                         </tr>
                       </tbody>
                     ) : (
@@ -1395,90 +1239,31 @@ export default class BillManager extends Component {
                     )}
                   </Tbl>
                 </Card.Body>
-                {/* <Card.Footer className="pb-3 mb-0">
-                  <Row>
-                    <Col md={4}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        GSTIN No.: <b>27AOLPK5202K1ZU</b>
-                      </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Date:{" "}
-                        <b>{moment(new Date()).format("DD / MM / YYYY")}</b>
-                      </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        State : Maharashtra Code: 27
-                      </h6>
-                    </Col>
-                    <div className="col-4 col-md-4 text-center">
-                      <img
-                        src="/Assets/QrCode1.jpg"
-                        height="100"
-                        width="100"
-                      />
-                    </div>
-                    <Col md={4}>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        Bank A/c: <b>16153011000070 Bank of India</b>
-                      </h6>
-                      <h6
-                        style={{
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        IFSC Code : BKID0001615
-                      </h6>
-                    </Col>
-                  </Row>
-                </Card.Footer> */}
               </Card>
             </Col>
           </Row>
         </div>
         <div className="col-10">
-        <ReactToPrint content={() => this.printComponentRef}>
-                    <PrintContextConsumer>
-                        {({ handlePrint }) => (
-                            <Button
-                                onClick={handlePrint}
-                                className="mt-2 mr-1"
-                                color="primary"
-                                variant="contained"
-                                style={{ float: "right" }}
-                                // disabled={
-                                //     (this.state.partyName ||
-                                //         this.state.newPartyName) &&
-                                //     this.state.address
-                                //         ? false
-                                //         : true
-                                // }
-                            >
-                                Print
-                            </Button>
-                        )}
-                    </PrintContextConsumer>
-                </ReactToPrint>
+          <ReactToPrint content={() => this.printComponentRef}>
+            <PrintContextConsumer>
+              {({ handlePrint }) => (
+                <Button
+                  onClick={handlePrint}
+                  className="mt-2 mr-1"
+                  color="primary"
+                  variant="contained"
+                  style={{ float: "right" }}
+                >
+                  Print
+                </Button>
+              )}
+            </PrintContextConsumer>
+          </ReactToPrint>
           <Button
             className="mt-2 mr-1"
             color="secondary"
             variant="contained"
             style={{ float: "right" }}
-            // type="submit"
             onClick={this.handleSave}
             disabled={
               this.state.partyName

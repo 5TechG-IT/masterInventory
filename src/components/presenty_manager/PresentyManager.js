@@ -6,11 +6,8 @@ import "jquery/dist/jquery.min.js";
 //Datatable Modules
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
-// import "datatables.net/js/buttons/1.7.0/js/dataTables.buttons.min.js";
 import "datatables.net-buttons-bs4/js/buttons.bootstrap4";
-// import "datatables.net-buttons-bs4/css/
 import $ from "jquery";
-import jsZip from "jszip";
 
 // styles
 import "./style.css";
@@ -22,25 +19,14 @@ import {
   TableContainer,
   Button,
   Paper,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Grid,
   Box,
 } from "@material-ui/core";
-import { Row, Col, Button as Btn1, Modal, Badge } from "react-bootstrap";
+import { Row, Col, Button as Badge } from "react-bootstrap";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 
 // Toastify imports
 import { toast } from "react-toastify";
-
-// import child components
-// import { AddNewEntry } from "./AddNewEntry.js";
 
 //API handling components
 import { API_URL } from "../../global";
@@ -49,7 +35,6 @@ const axios = require("axios");
 require("jszip");
 require("pdfmake");
 
-// window.JSZip = jsZip;
 
 class PresentyManager extends Component {
   constructor(props) {
@@ -69,7 +54,6 @@ class PresentyManager extends Component {
   }
 
   fetchWorkerData() {
-    // if worker id is null
     if (!this.state.workerId) return null;
 
     let url = API_URL;
@@ -87,7 +71,6 @@ class PresentyManager extends Component {
   }
 
   fetchPresentyData = () => {
-    // if worker id is null
     if (!this.state.workerId) return null;
 
     let url = API_URL;
@@ -96,12 +79,10 @@ class PresentyManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("presenty data: ", res.data);
         this.setState({ PresentyData: res.data });
         this.initializeDataTable();
       })
       .catch((err) => {
-        console.log("presenty data fetch error: ", err);
       });
   };
 
@@ -115,11 +96,9 @@ class PresentyManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("Total presenty data: ", res.data);
         this.setState({ totalPresenty: res.data[0].total });
       })
       .catch((err) => {
-        console.log("Total presenty fetch error: ", err);
       });
   };
 
@@ -139,32 +118,27 @@ class PresentyManager extends Component {
         this.fetchPresentyData();
       })
       .catch((err) => {
-        console.log(err);
       });
   }
 
   handleAddPresenty(e) {
     e.preventDefault();
     let url = API_URL;
-    const query = `INSERT INTO presenty(status, reason, workerId, date) values(${
-      this.state.status
-    }, "${this.state.reason}", ${this.state.workerId}, "${moment(
-      new Date()
-    ).format("YYYY-MM-DD")}");`;
+    const query = `INSERT INTO presenty(status, reason, workerId, date) values(${this.state.status
+      }, "${this.state.reason}", ${this.state.workerId}, "${moment(
+        new Date()
+      ).format("YYYY-MM-DD")}");`;
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
       .then((res) => {
-        console.log("presenty added response: ", res.data);
       })
       .catch((err) => {
-        console.log("presenty adding error: ", err);
       });
   }
 
   refreshPresenty() {
     window.location.reload(false);
-    // this.forceUpdate();
   }
 
   componentDidMount() {
@@ -243,8 +217,8 @@ class PresentyManager extends Component {
             {record["status"] == 1
               ? "Present"
               : record["status"] == 2
-              ? "Absent"
-              : "Other"}
+                ? "Absent"
+                : "Other"}
           </td>
           <td>{record["reason"] || "-"}</td>
           <td>{last_modified}</td>

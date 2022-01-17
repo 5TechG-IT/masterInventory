@@ -45,9 +45,8 @@ export default class ProductManager extends Component {
             productData: {},
             activeProductId: null,
             activeStock: null,
-            description:"",
+            description: "",
             isLoadingProductData: false,
-            
         };
     }
     getproductData() {
@@ -62,9 +61,8 @@ export default class ProductManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("product data: ", res.data);
-                this.setState({ productData: res.data, isLoadingProductData: false  });
-                
+                this.setState({ productData: res.data, isLoadingProductData: false });
+
             })
             .catch((err) => {
                 console.log(err);
@@ -75,7 +73,6 @@ export default class ProductManager extends Component {
     handleAddSubmit = () => {
         let url = API_URL;
         const query = `INSERT INTO products(name,description, quantity, price, position) VALUES('${this.state.name}','${this.state.description}', ${this.state.quantity}, ${this.state.price}, '${this.state.position}')`;
-        console.log(query)
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -84,7 +81,6 @@ export default class ProductManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("product inserted successfully");
                 toast.success("Product inserted successfully");
                 setTimeout(() => {
                     {
@@ -104,8 +100,6 @@ export default class ProductManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("update status data: ", res.data);
-                console.log("Stock updated successfully");
                 toast.success("Stock updated successfully");
                 setTimeout(() => {
                     {
@@ -125,8 +119,6 @@ export default class ProductManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("deleted status data: ", res.data);
-                console.log("Product deleted successfully");
                 toast.error("Product deleted successfully");
                 setTimeout(() => {
                     {
@@ -149,30 +141,34 @@ export default class ProductManager extends Component {
 
     componentDidUpdate() {
         const title = "Worker data -" + moment().format("DD-MMMM-YYYY");
-        $("#product_table").DataTable({
-          destroy: true,
-          keys: true,
-          dom:
-            "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-            "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-            "<'row'<'col-sm-12' tr>>" +
-            "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-          buttons: [
-            // "copy",
-            "csv",
-            // "excelBootstrap4",
-            {
-              extend: "print",
-              title,
-              messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-              download: "open",
-              exportOptions: {
-                columns: [0, 1, 2, 3, 4],
-              },
-            },
-          ],
+        $(document).ready(function () {
+            $("#product_table").DataTable({
+                destroy: true,
+                keys: true,
+                rowReorder: {
+                    selector: 'td:nth-child(2)'
+                },
+                responsive: true,
+                dom:
+                    "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+                    "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+                    "<'row'<'col-sm-12' tr>>" +
+                    "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+                buttons: [
+                    "csv",
+                    {
+                        extend: "print",
+                        title,
+                        messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                        },
+                    },
+                ],
+            });
         });
-      }
+    }
 
     renderUpdateProductModal() {
         return (
@@ -252,7 +248,7 @@ export default class ProductManager extends Component {
                                 </Col>
                             </Row>
                             <Row>
-                            <Col size="12">
+                                <Col size="12">
                                     <TextField
                                         id="updateDescription"
                                         label="description"
@@ -302,7 +298,7 @@ export default class ProductManager extends Component {
                             <div className="mt-3">
                                 <TextField
                                     id="productCode"
-                                    label="Product Code"
+                                    label="Product Name"
                                     variant="outlined"
                                     type="text"
                                     size="small"
@@ -316,7 +312,7 @@ export default class ProductManager extends Component {
                                 />
                                 <TextField
                                     id="productName"
-                                    label="Product Name"
+                                    label="Product Description"
                                     variant="outlined"
                                     type="text"
                                     size="small"
@@ -334,7 +330,7 @@ export default class ProductManager extends Component {
                                     variant="outlined"
                                     type="number"
                                     size="small"
-                                    style={{maxWidth:100}}
+                                    style={{ maxWidth: 100 }}
                                     value={this.state.quantity}
                                     className="mr-3"
                                     onChange={(e) =>
@@ -387,102 +383,102 @@ export default class ProductManager extends Component {
                     className="mt-2"
                 >
                     {!this.state.isLoadingProductData && (
-                    <table id="product_table" className="p-0 m-0 measure1" style={{ width: "100%" }}>
-                        <thead>
-                            <tr>
-                                <th align="center">UID</th>
-                                <th>Product Code</th>
-                                <th>Product Name/ Description</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Position</th>
-                                <th>Last Modified</th>
-                                <th>Option</th>
-                            </tr>
-                        </thead>
-                        <tbody colspan="2">
-                            {this.state.productData.length > 0 ? (
-                                this.state.productData.map((product) => {
-                                    let color = product.stock < 5 ? 'red' : (product.stock > 5 ? 'black' : 'black');
-                                    return (
-                                        <tr key={product.id} getProductData={this.getProductData}>
-                                            <td align="center">
-                                                <Badge variant="primary">
-                                                    {" "}
-                                                    {product.id}
-                                                </Badge>
-                                            </td>
-                                            <td
-                                                style={{
-                                                    textTransform: "capitalize",
-                                                }}
-                                            >
-                                                {product.name}
-                                            </td>
-                                            <td>{product.description == null ? "N/A" : product.description}</td>
-                                            <td style={{color: color}}>{product.quantity}</td>
-                                            <td>₹ {product.price}</td>
-                                            <td>{product.position}</td>
-                                            
-                                            <td>
-                                                {moment(
-                                                    product.lastModified
-                                                ).format(
-                                                    "DD / MM / YYYY hh:mm"
-                                                )}
-                                            </td>
-                                            <td align="center">
-                                                <Button
-                                                    color="secondary"
-                                                    variant="contained"
-                                                    className="my-1 mr-1"
-                                                    onClick={(e) => {
-                                                        this.setState({
-                                                            activeProductId:
-                                                                product.id,
-                                                            activeStock:
-                                                                product.quantity,
-                                                            name: product.name,
-                                                            unitPrice: product.price,
-                                                            position: product.position,   
-                                                            description: product.description, 
-                                                            showUpdateModal: true,
-                                                        });
+                        <table id="product_table" className="p-0 m-0 measure1" class="display nowrap" style={{ width: "100%" }}>
+                            <thead>
+                                <tr>
+                                    <th align="center">UID</th>
+                                    <th>Product Name</th>
+                                    <th>Product Description</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Position</th>
+                                    <th>Last Modified</th>
+                                    <th>Option</th>
+                                </tr>
+                            </thead>
+                            <tbody colspan="2">
+                                {this.state.productData.length > 0 ? (
+                                    this.state.productData.map((product) => {
+                                        let color = product.stock < 5 ? 'red' : (product.stock > 5 ? 'black' : 'black');
+                                        return (
+                                            <tr key={product.id} getProductData={this.getProductData}>
+                                                <td align="center">
+                                                    <Badge variant="primary">
+                                                        {" "}
+                                                        {product.id}
+                                                    </Badge>
+                                                </td>
+                                                <td
+                                                    style={{
+                                                        textTransform: "capitalize",
                                                     }}
                                                 >
-                                                    <FontAwesomeIcon
-                                                        icon={faPenAlt}
-                                                    />
-                                                </Button>
-                                                {this.renderUpdateProductModal()}
+                                                    {product.name}
+                                                </td>
+                                                <td>{product.description == null ? "N/A" : product.description}</td>
+                                                <td style={{ color: color }}>{product.quantity}</td>
+                                                <td>₹ {product.price}</td>
+                                                <td>{product.position}</td>
 
-                                                <Button
-                                                    variant="contained"
-                                                    className="my-1"
-                                                    onClick={(e) => {
-                                                        if (
-                                                            window.confirm(
-                                                                "Delete the item?"
-                                                            )
-                                                        ) {
-                                                            this.deleteRecord(
-                                                                product.id
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <FontAwesomeIcon
-                                                        icon={faTrash}
-                                                    />
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            ) : ""}
-                        </tbody>
-                    </table>
-                     )}
+                                                <td>
+                                                    {moment(
+                                                        product.lastModified
+                                                    ).format(
+                                                        "DD / MM / YYYY hh:mm"
+                                                    )}
+                                                </td>
+                                                <td align="center">
+                                                    <Button
+                                                        color="secondary"
+                                                        variant="contained"
+                                                        className="my-1 mr-1"
+                                                        onClick={(e) => {
+                                                            this.setState({
+                                                                activeProductId:
+                                                                    product.id,
+                                                                activeStock:
+                                                                    product.quantity,
+                                                                name: product.name,
+                                                                unitPrice: product.price,
+                                                                position: product.position,
+                                                                description: product.description,
+                                                                showUpdateModal: true,
+                                                            });
+                                                        }}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faPenAlt}
+                                                        />
+                                                    </Button>
+                                                    {this.renderUpdateProductModal()}
+
+                                                    <Button
+                                                        variant="contained"
+                                                        className="my-1"
+                                                        onClick={(e) => {
+                                                            if (
+                                                                window.confirm(
+                                                                    "Delete the item?"
+                                                                )
+                                                            ) {
+                                                                this.deleteRecord(
+                                                                    product.id
+                                                                );
+                                                            }
+                                                        }}
+                                                    >
+                                                        <FontAwesomeIcon
+                                                            icon={faTrash}
+                                                        />
+                                                    </Button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : ""}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
                 <ToastContainer
                     position={toast.POSITION.TOP_RIGHT}

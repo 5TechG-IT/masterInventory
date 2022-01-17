@@ -26,7 +26,6 @@ import {
 
 // Toastify imports
 import { ToastContainer, toast } from "react-toastify";
-// import "../ledger_manager/exportManager/node_modules/react-toastify/dist/ReactToastify.css";
 
 //API handling components
 import { API_URL } from "../../global";
@@ -76,7 +75,6 @@ export default class WholesalerPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("party data: ", res.data);
                 this.setState({ wholesalersData: res.data });
             })
             .catch((err) => {
@@ -100,9 +98,10 @@ export default class WholesalerPartyManager extends Component {
                 toast.success("Party details updated successfully");
                 setTimeout(() => {
                     this.refreshParties();
-                }, 2000);            })
+                }, 2000);
+            })
             .catch((err) => {
-                console.log("error while updating party data", err);
+                toast.error("Party details update error");
             });
     }
 
@@ -125,7 +124,7 @@ export default class WholesalerPartyManager extends Component {
                 }, 2000);
             })
             .catch((err) => {
-                console.log(err);
+                toast.error("Party details adding error");
             });
     }
 
@@ -136,15 +135,13 @@ export default class WholesalerPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("deleted status data: ", res.data);
-                console.log("Party deleted successfully");
                 toast.error("Party deleted successfully");
                 setTimeout(() => {
                     this.refreshParties();
                 }, 2000);
             })
             .catch((err) => {
-                console.log("record delete error: ", err);
+                toast.error("Party deleted successfully");
             });
     }
 
@@ -157,35 +154,39 @@ export default class WholesalerPartyManager extends Component {
     }
 
     componentDidUpdate() {
-        // const title = "Party data -" + moment().format("DD-MMMM-YYYY");
-        $("#retailer_table").DataTable({
-            destroy: true,
-            keys: true,
-            dom:
-                "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-                "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-                "<'row'<'col-sm-12' tr>>" +
-                "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-            buttons: [
-                // "copy",
-                {
-                    extend: "csv",
-                    
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4 ],
-                    },
+        $(document).ready(function () {
+
+            $("#retailer_table").DataTable({
+                destroy: true,
+                keys: true,
+                rowReorder: {
+                    selector: 'td:nth-child(2)'
                 },
-                // "excelBootstrap4",
-                {
-                    extend: "print",
-                   
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4],
+                responsive: true,
+                dom:
+                    "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+                    "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+                    "<'row'<'col-sm-12' tr>>" +
+                    "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+                buttons: [
+                    {
+                        extend: "csv",
+
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                        },
                     },
-                },
-            ],
+                    {
+                        extend: "print",
+
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                        },
+                    },
+                ],
+            });
         });
     }
 
@@ -233,7 +234,7 @@ export default class WholesalerPartyManager extends Component {
                                 className="mx-1"
                                 color="primary"
                                 variant="contained"
-                                onClick={(e) => {}}
+                                onClick={(e) => { }}
                             >
                                 <FontAwesomeIcon icon={faBook} />
                             </Button>
@@ -610,7 +611,7 @@ export default class WholesalerPartyManager extends Component {
                                 <div>
                                     <table
                                         id="retailer_table"
-                                        className="display"
+                                        className="display nowrap"
                                         style={{ width: "100%" }}
                                     >
                                         <thead>

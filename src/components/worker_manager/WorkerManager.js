@@ -30,14 +30,9 @@ import {
 
 // Toastify imports
 import { ToastContainer, toast } from "react-toastify";
-// import "../ledger_manager/exportManager/node_modules/react-toastify/dist/ReactToastify.css";
 
 //API handling components
 import { API_URL } from "../../global";
-
-// import child components
-// import RetailerWorkerManager from "./RetailerWorkerManager";
-// import DistributorWorkerManager from "./DistributorWorkerManager";
 
 import moment from "moment";
 
@@ -87,7 +82,6 @@ class WorkerManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("worker data: ", res.data);
         this.setState({ workersData: res.data, isLoadingWorkerData: false });
       })
       .catch((err) => {
@@ -111,12 +105,12 @@ class WorkerManager extends Component {
       .then((res) => {
         toast.success("Worker details updated successfully");
         setTimeout(() => {
-            this.refreshWorkers();
-          }, 2000);
-       
+          this.refreshWorkers();
+        }, 2000);
+
       })
       .catch((err) => {
-        console.log("error while updating worker data", err);
+        toast.success("Worker details update error");
       });
   }
 
@@ -139,7 +133,7 @@ class WorkerManager extends Component {
         }, 2000);
       })
       .catch((err) => {
-        console.log(err);
+        toast.success("Worker details adding error");
       });
   }
 
@@ -150,15 +144,13 @@ class WorkerManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("deleted status data: ", res.data);
-        console.log("Worker deleted successfully");
-        toast.error("Worker deleted successfully");
+        toast.success("Worker deleted successfully");
         setTimeout(() => {
           this.refreshWorkers();
         }, 2000);
       })
       .catch((err) => {
-        console.log("record delete error: ", err);
+        toast.error("Worker delete error");
       });
   }
 
@@ -176,28 +168,32 @@ class WorkerManager extends Component {
 
   componentDidUpdate() {
     const title = "Worker data -" + moment().format("DD-MMMM-YYYY");
-    $("#worker_table").DataTable({
-      destroy: true,
-      keys: true,
-      dom:
-        "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-        "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-        "<'row'<'col-sm-12' tr>>" +
-        "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-      buttons: [
-        // "copy",
-        "csv",
-        // "excelBootstrap4",
-        {
-          extend: "print",
-          title,
-          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-          download: "open",
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4],
-          },
+    $(document).ready(function () {
+      $("#worker_table").DataTable({
+        destroy: true,
+        keys: true,
+        rowReorder: {
+          selector: 'td:nth-child(2)'
         },
-      ],
+        responsive: true,
+        dom:
+          "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+          "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+          "<'row'<'col-sm-12' tr>>" +
+          "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+        buttons: [
+          "csv",
+          {
+            extend: "print",
+            title,
+            messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+            download: "open",
+            exportOptions: {
+              columns: [0, 1, 2, 3, 4],
+            },
+          },
+        ],
+      });
     });
   }
 
@@ -223,7 +219,7 @@ class WorkerManager extends Component {
             </a>
           </td>
           <td align="center">{worker["address"]}</td>
-          
+
           <td align="center">
             {worker["city"] == null ? 0 : worker["city"]}
           </td>
@@ -253,7 +249,7 @@ class WorkerManager extends Component {
                 className="mx-1"
                 color="primary"
                 variant="contained"
-                onClick={(e) => {}}
+                onClick={(e) => { }}
               >
                 <FontAwesomeIcon icon={faBook} />
               </Button>
@@ -263,7 +259,7 @@ class WorkerManager extends Component {
                 className="mx-1"
                 color="primary"
                 variant="contained"
-                onClick={(e) => {}}
+                onClick={(e) => { }}
               >
                 <FontAwesomeIcon icon={faCalendarCheck} />
               </Button>
@@ -365,32 +361,32 @@ class WorkerManager extends Component {
                   />
                 </Col>
                 <Col>
-                <FormControl
-                  variant="filled"
-                  style={{
-                    minWidth: "120px",
-                  }}
-                  className="mt-2 ml-2"
-                >
-                  <InputLabel id="demo-simple-select-outlined-label">
-                    Type
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-outlined-label"
-                    id="demo-simple-select-outlined"
-                    label="type"
-                    defaultValue={1}
-                    onChange={(e) =>
-                      this.setState({
-                        activeWorkerType: e.target.value,
-                      })
-                    }
+                  <FormControl
+                    variant="filled"
+                    style={{
+                      minWidth: "120px",
+                    }}
+                    className="mt-2 ml-2"
                   >
-                    <MenuItem value={1}>Retialer</MenuItem>
-                    <MenuItem value={2}>Distributor</MenuItem>
-                  </Select>
-                </FormControl>
-              </Col>
+                    <InputLabel id="demo-simple-select-outlined-label">
+                      Type
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-outlined-label"
+                      id="demo-simple-select-outlined"
+                      label="type"
+                      defaultValue={1}
+                      onChange={(e) =>
+                        this.setState({
+                          activeWorkerType: e.target.value,
+                        })
+                      }
+                    >
+                      <MenuItem value={1}>Retialer</MenuItem>
+                      <MenuItem value={2}>Distributor</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Col>
               </Row>
             </div>
             <hr />
@@ -546,7 +542,7 @@ class WorkerManager extends Component {
         value={this.state.value}
         className="container-fluid border m-0 p-0 main"
       >
-       
+
         <TabPanel value="1" className="m-0 p-0">
           <div className="container-fluid border m-0 p-1">
             <div class="btn-group" role="group" aria-label="Basic example">
@@ -580,6 +576,7 @@ class WorkerManager extends Component {
                     <table
                       id="worker_table"
                       className="display"
+                      class="display nowrap"
                       style={{ width: "100%" }}
                     >
                       <thead>
@@ -601,13 +598,6 @@ class WorkerManager extends Component {
             </Row>
           </div>
         </TabPanel>
-        {/* <TabPanel value="2" className="m-0 p-0">
-                    <RetailerWorkerManager />
-                </TabPanel>
-                <TabPanel value="3" className="m-0 p-0">
-                    <DistributorWorkerManager />
-                </TabPanel> */}
-
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={5000} />
       </TabContext>
     );

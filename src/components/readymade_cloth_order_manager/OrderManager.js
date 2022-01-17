@@ -1,29 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
-    TextField,
     AppBar,
-    Tab,
-    Button,
-    FormControl,
-    MenuItem,
-    Select,
-    InputLabel,
+    Tab
 } from "@material-ui/core";
 
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
-import Autocomplete, {
-    createFilterOptions,
-} from "@material-ui/lab/Autocomplete";
-
-import { Row, Col, Card, Table as Tbl } from "react-bootstrap";
 import "./style.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Swal from "sweetalert2";
-import ReactToPrint from "react-to-print";
-import moment from "moment";
 
 // sub components
 import BillManager from "./BillManager";
@@ -44,14 +28,13 @@ function OrderManager() {
             className="container-fluid border m-0 p-0 main"
         >
             <AppBar position="static" color="default">
-                <TabList 
+                <TabList
                     onChange={handleTabs}
                     aria-label="simple tabs example"
                     indicatorColor="primary"
                     textColor="primary"
-                    
                 >
-                    <Tab  label="New Bill" active value="1" />
+                    <Tab label="New Bill" active value="1" />
                     <Tab label="Bill History (GST)" value="2" />
                     <Tab label="Bill History (Non GST)" value="3" />
                     <Tab label="Quotations" value="4" />

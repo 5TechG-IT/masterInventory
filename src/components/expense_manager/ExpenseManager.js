@@ -76,11 +76,9 @@ export class ExpenseManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("expenses data: ", res.data);
         this.setState({ expenseData: res.data, isLoadingExpense: false });
       })
       .catch((err) => {
-        console.log(err);
         this.setState({ isLoadingExpense: false });
       });
   }
@@ -100,7 +98,6 @@ export class ExpenseManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("Monthly expenses data: ", res.data);
         this.setState({ monthlyExpenseData: res.data });
       })
       .catch((err) => {
@@ -123,7 +120,6 @@ export class ExpenseManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("Todays expenses data: ", res.data);
         this.setState({ dailyExpenseData: res.data });
       })
       .catch((err) => {
@@ -136,7 +132,7 @@ export class ExpenseManager extends Component {
     this.getMonthlyExpense();
     this.getDailyExpense();
   }
-  
+
 
   refreshData() {
     this.getExpenseData();
@@ -146,32 +142,40 @@ export class ExpenseManager extends Component {
 
   componentDidUpdate() {
     const title = "expense_table";
-    $("#expense_table").DataTable({
-      destroy: true,
-      dom:
-        "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-        "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-        "<'row'<'col-sm-12' tr>>" +
-        "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-      buttons: [
-        {
-          extend: "csv",
-          title,
-          download: "open",
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-          },
+    $(document).ready(function () {
+      $("#expense_table").DataTable({
+        destroy: true,
+        rowReorder: {
+          selector: 'td:nth-child(2)'
         },
-        {
-          extend: "print",
-          title,
-          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-          download: "open",
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+        lengthChange: false,
+        autoWidth: false,
+        responsive: true,
+        dom:
+          "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+          "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+          "<'row'<'col-sm-12' tr>>" +
+          "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+        buttons: [
+          {
+            extend: "csv",
+            title,
+            download: "open",
+            exportOptions: {
+              columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            },
           },
-        },
-      ],
+          {
+            extend: "print",
+            title,
+            messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+            download: "open",
+            exportOptions: {
+              columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+            },
+          },
+        ],
+      });
     });
   }
 
@@ -196,10 +200,9 @@ export class ExpenseManager extends Component {
         toast("Expense added succesfully");
         // this.getExpenseData();
         window.location.reload();
-        
+
       })
       .catch((err) => {
-        console.log(err);
         toast("Failed to add expense");
       });
   }
@@ -216,14 +219,12 @@ export class ExpenseManager extends Component {
       .post(url, data)
       .then((res) => {
         toast.success("expense deleted successfully");
-      
         window.location.reload();
         this.getExpenseData();
 
-       
+
       })
       .catch((err) => {
-        console.log(err);
         toast("Failed to delete expense");
       });
   }
@@ -302,9 +303,9 @@ export class ExpenseManager extends Component {
   }
 
   renderExpenses() {
-    if(this.state.expenseData == null)
+    if (this.state.expenseData == null)
       return null;
-    return  (
+    return (
       this.state.expenseData.map((expense) => {
         return (
           <tr key={expense.id}>
@@ -424,16 +425,17 @@ export class ExpenseManager extends Component {
             </form>
           </Card.Body>
         </Card>
-        
-      
-           {!this.state.isLoadingExpense && (
+
+
+        {!this.state.isLoadingExpense && (
           <table
             stickyHeader
             size="medium"
             aria-label="simple table"
             component={Paper}
             id="expense_table"
-           
+            class="display nowrap" style={{ width: '100%' }}
+
           >
             <thead>
               <tr>
@@ -445,11 +447,10 @@ export class ExpenseManager extends Component {
               </tr>
             </thead>
             <tbody>
-             {this.renderExpenses()}
+              {this.renderExpenses()}
             </tbody>
           </table>
-             )}
-        {/* </TableContainer> */}
+        )}
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={3000} />
       </div>
     );

@@ -29,7 +29,6 @@ import {
 
 // Toastify imports
 import { ToastContainer, toast } from "react-toastify";
-// import "../ledger_manager/exportManager/node_modules/react-toastify/dist/ReactToastify.css";
 
 //API handling components
 import { API_URL } from "./../../global";
@@ -51,7 +50,6 @@ require("datatables.net-scroller-bs4");
 require("datatables.net-select-bs4");
 require("pdfmake");
 
-// constants
 const axios = require("axios");
 
 export default class DistributorPartyManager extends Component {
@@ -79,7 +77,6 @@ export default class DistributorPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("party data: ", res.data);
                 this.setState({ partiesData: res.data });
             })
             .catch((err) => {
@@ -92,7 +89,6 @@ export default class DistributorPartyManager extends Component {
         let url = API_URL;
 
         const query = `UPDATE party SET name="${this.state.activePartyName}", mobile="${this.state.activePartyMobile}", aadharNo="${this.state.activePartyAadharNo}", address="${this.state.activePartyAddress}",city="${this.state.activePartyCity}", type=${this.state.activePartyType} WHERE id=${this.state.activePartyId};`;
-        console.log(query)
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -105,17 +101,16 @@ export default class DistributorPartyManager extends Component {
                 setTimeout(() => {
                     this.refreshParties();
                 }, 2000);
-                
+
             })
             .catch((err) => {
-                console.log("error while updating party data", err);
+                toast.error("error while updating party data");
             });
     }
 
     handleAddSubmit(e) {
         e.preventDefault();
         let url = API_URL;
-
         const query = `INSERT INTO party(name, mobile,aadharNo, address,city, type) VALUES('${this.state.activePartyName}', '${this.state.activePartyMobile}', '${this.state.activePartyAadharNo}', '${this.state.activePartyAddress}','${this.state.activePartyCity}', ${this.state.activePartyType})`;
         let data = {
             crossDomain: true,
@@ -131,7 +126,7 @@ export default class DistributorPartyManager extends Component {
                 }, 2000);
             })
             .catch((err) => {
-                console.log(err);
+                toast.error("Failed to add party details");
             });
     }
 
@@ -142,15 +137,13 @@ export default class DistributorPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("deleted status data: ", res.data);
-                console.log("Party deleted successfully");
                 toast.error("Party deleted successfully");
                 setTimeout(() => {
                     this.refreshParties();
                 }, 2000);
             })
             .catch((err) => {
-                console.log("record delete error: ", err);
+                toast.success("record delete error");
             });
     }
 
@@ -163,35 +156,36 @@ export default class DistributorPartyManager extends Component {
     }
 
     componentDidUpdate() {
-        // const title = "Party data -" + moment().format("DD-MMMM-YYYY");
-        $("#distributor_table").DataTable({
-            destroy: true,
-            keys: true,
-            dom:
-                "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-                "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-                "<'row'<'col-sm-12' tr>>" +
-                "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-            buttons: [
-                // "copy",
-                {
-                    extend: "csv",
-                    
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4, 5 ],
-                    },
+        $(document).ready(function () {
+            $("#distributor_table").DataTable({
+                destroy: true,
+                keys: true,
+                rowReorder: {
+                    selector: 'td:nth-child(2)'
                 },
-                // "excelBootstrap4",
-                {
-                    extend: "print",
-                   
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4, 5 ],
+                responsive: true,
+                dom:
+                    "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+                    "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+                    "<'row'<'col-sm-12' tr>>" +
+                    "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+                buttons: [
+                    {
+                        extend: "csv",
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5],
+                        },
                     },
-                },
-            ],
+                    {
+                        extend: "print",
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5],
+                        },
+                    },
+                ],
+            });
         });
     }
 
@@ -239,7 +233,7 @@ export default class DistributorPartyManager extends Component {
                                 className="mx-1"
                                 color="primary"
                                 variant="contained"
-                                onClick={(e) => {}}
+                                onClick={(e) => { }}
                             >
                                 <FontAwesomeIcon icon={faBook} />
                             </Button>
@@ -409,7 +403,7 @@ export default class DistributorPartyManager extends Component {
                                             <MenuItem value={4}>
                                                 Customer
                                             </MenuItem>
-                                            
+
                                         </Select>
                                     </FormControl>
                                 </Col>
@@ -587,11 +581,11 @@ export default class DistributorPartyManager extends Component {
                                                             })
                                                         }
                                                     >
-                                                       
+
                                                         <MenuItem value={2}>
                                                             DistributorPartyManager
                                                         </MenuItem>
-                                                       
+
                                                     </Select>
                                                 </FormControl>
                                             </Col>
@@ -619,7 +613,7 @@ export default class DistributorPartyManager extends Component {
                                 <div>
                                     <table
                                         id="distributor_table"
-                                        className="display"
+                                        className="display nowrap"
                                         style={{ width: "100%" }}
                                     >
                                         <thead>

@@ -26,7 +26,6 @@ import {
 
 // Toastify imports
 import { ToastContainer, toast } from "react-toastify";
-// import "../ledger_manager/exportManager/node_modules/react-toastify/dist/ReactToastify.css";
 
 //API handling components
 import { API_URL } from "../../global";
@@ -48,7 +47,6 @@ require("datatables.net-scroller-bs4");
 require("datatables.net-select-bs4");
 require("pdfmake");
 
-// constants
 const axios = require("axios");
 
 export default class CustomerPartyManager extends Component {
@@ -76,7 +74,6 @@ export default class CustomerPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("party data: ", res.data);
                 this.setState({ customersData: res.data });
             })
             .catch((err) => {
@@ -88,8 +85,7 @@ export default class CustomerPartyManager extends Component {
         e.preventDefault();
         let url = API_URL;
 
-        const query = `UPDATE party SET name="${this.state.activeCustomerName}", mobile= ${this.state.activeCustomerMobile},aadharNo= "${this.state.activeCustomerAadharNo}", address="${this.state.activeCustomerAddress}",city="${this.state.activeCustomerCity}",type=${this.state.activeCustomerType} WHERE id=${this.state.activeCustomerId};`;
-        console.log(query)
+        const query = `UPDATE party SET name="${this.state.activeCustomerName}", mobile= ${this.state.activeCustomerMobile},aadharNo= "${this.state.activeCustomerAadharNo}", address="${this.state.activeCustomerAddress}",city="${this.state.activeCustomerCity}",type=${this.state.activeCustomerType} WHERE id=${this.state.activeCustomerId};`
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -104,7 +100,7 @@ export default class CustomerPartyManager extends Component {
                 }, 2000);
             })
             .catch((err) => {
-                console.log("error while updating party data", err);
+                toast.error("Party details update error");
             });
     }
 
@@ -113,7 +109,6 @@ export default class CustomerPartyManager extends Component {
         let url = API_URL;
 
         const query = `INSERT INTO party(name, mobile,aadharNo, address,city,type) VALUES('${this.state.activeCustomerName}', '${this.state.activeCustomerMobile}','${this.state.activeCustomerAadharNo}', '${this.state.activeCustomerAddress}','${this.state.activeCustomerCity}', ${this.state.activeCustomerType})`;
-        console.log(query)
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -128,7 +123,7 @@ export default class CustomerPartyManager extends Component {
                 }, 2000);
             })
             .catch((err) => {
-                console.log(err);
+                toast.success("Party details adding error");
             });
     }
 
@@ -139,15 +134,13 @@ export default class CustomerPartyManager extends Component {
         axios
             .post(url, data)
             .then((res) => {
-                console.log("deleted status data: ", res.data);
-                console.log("Party deleted successfully");
                 toast.error("Party deleted successfully");
                 setTimeout(() => {
                     this.refreshParties();
                 }, 2000);
             })
             .catch((err) => {
-                console.log("record delete error: ", err);
+                toast.error("Party details delete error");
             });
     }
 
@@ -160,35 +153,39 @@ export default class CustomerPartyManager extends Component {
     }
 
     componentDidUpdate() {
-        // const title = "Party data -" + moment().format("DD-MMMM-YYYY");
-        $("#retailer_table").DataTable({
-            destroy: true,
-            keys: true,
-            dom:
-                "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-                "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-                "<'row'<'col-sm-12' tr>>" +
-                "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-            buttons: [
-                // "copy",
-                {
-                    extend: "csv",
-                    
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4 ],
-                    },
+        $(document).ready(function () {
+
+            $("#retailer_table").DataTable({
+                destroy: true,
+                keys: true,
+                rowReorder: {
+                    selector: 'td:nth-child(2)'
                 },
-                // "excelBootstrap4",
-                {
-                    extend: "print",
-                   
-                    download: "open",
-                    exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4],
+                responsive: true,
+                dom:
+                    "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+                    "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+                    "<'row'<'col-sm-12' tr>>" +
+                    "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+                buttons: [
+                    {
+                        extend: "csv",
+
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                        },
                     },
-                },
-            ],
+                    {
+                        extend: "print",
+
+                        download: "open",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                        },
+                    },
+                ],
+            });
         });
     }
 
@@ -235,7 +232,7 @@ export default class CustomerPartyManager extends Component {
                                 className="mx-1"
                                 color="primary"
                                 variant="contained"
-                                onClick={(e) => {}}
+                                onClick={(e) => { }}
                             >
                                 <FontAwesomeIcon icon={faBook} />
                             </Button>
@@ -612,7 +609,7 @@ export default class CustomerPartyManager extends Component {
                                 <div>
                                     <table
                                         id="retailer_table"
-                                        className="display"
+                                        className="display nowrap"
                                         style={{ width: "100%" }}
                                     >
                                         <thead>

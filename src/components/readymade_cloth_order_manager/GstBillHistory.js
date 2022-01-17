@@ -52,21 +52,18 @@ export default class GstBillHistory extends Component {
       pname: null,
       total: 0,
       gst: 0,
-      // vehicleNo: null,
       companyType: 1,
       mobileNo: 0,
       paymentMode: 0,
       receiverName: null,
       itemsList: [],
       isLoadingItems: false,
-      // vehicleNo: null,
     };
   }
 
   fetchBillList = () => {
     let url = API_URL;
     const query = `SELECT ngb.*, p.name as pname,mobile,p.address,companyType,discount FROM gstBill as ngb inner join party as p where ngb.partyId = p.id AND ngb.status=1 ORDER BY ngb.id DESC;`;
-    console.log(query)
     let data = { crossDomain: true, crossOrigin: true, query: query };
     axios
       .post(url, data)
@@ -93,9 +90,6 @@ export default class GstBillHistory extends Component {
     })
     console.log(result)
     this.setState({ billList: result });  
-    // // init data table
-    // this.initializeDataTable();
-
   }
 
   clearFilter(){
@@ -143,7 +137,6 @@ export default class GstBillHistory extends Component {
       .post(url, data)
       .then((res) => {
         console.log("deleted status data: ", res.data);
-        console.log("item deleted successfully");
         toast.success("Record deleted successfully");
         this.fetchBillList();
       })
@@ -168,7 +161,6 @@ export default class GstBillHistory extends Component {
   handleUpdateSubmit(e) {
     let url = API_URL;
     const query = `UPDATE gstBill SET balance = total - ${this.state.activePaid}, paid = paid + ${this.state.activePaid} WHERE id=${this.state.activeBillId};`;
-    console.log(query)
     let data = {
       crossDomain: true,
       crossOrigin: true,
@@ -198,7 +190,6 @@ export default class GstBillHistory extends Component {
         "<'row'<'col-sm-12' tr>>" +
         "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
       buttons: [
-        // "copy",
         {
           extend: "csv",
           title,
@@ -208,7 +199,6 @@ export default class GstBillHistory extends Component {
             columns: [0, 1, 2, 3, 4, 5],
           },
         },
-        // "excelBootstrap4",
         {
           extend: "print",
           title,
@@ -224,8 +214,6 @@ export default class GstBillHistory extends Component {
 
   renderMemoList = () => {
     if (this.state.billList == null) return null;
-
-    // else
     return this.state.billList.map((bill) => {
       let color = bill.balance > 0 ? 'red' : '';
       return (
@@ -257,13 +245,11 @@ export default class GstBillHistory extends Component {
                     address: bill.address,
                     companyType: bill.companyType,
                     adjustment: bill.adjustment,
-                    // vehicleNo: bill.vehicleNo,
                     mobileNo: bill.mobileNo,
                     gst: bill.gst,
                     discount: bill.discount,
                     paymentMode: bill.paymentMode,
                     receiverName: bill.receiverName,
-                    // vehicleNo: bill.vehicleNo,
                   },
                   this.fetchBillItemList
                 );
@@ -390,19 +376,9 @@ export default class GstBillHistory extends Component {
                     </div>
                     <div className="col-10">
                       <h5 className="text-center pb-0 mb-0">
-                        {/* <b>{this.state.companyType == 1 ? "WESTERN | auto parts and accessories" : "WESTERN | Motors"}</b> */}
-                        <h2><b>पाटील ऑटोमोबाईल्स</b></h2>
-                        <p>सेल्स । स्पेअर्स । सर्विस </p>
+                        <h2><b>MASTER INVENTORY</b></h2>
                       </h5>
                       <hr />
-                      <p className="text-center pb-0 mb-0">
-                        क्रांतिसिंह नाना पाटील शैक्षणिक संकुल, गाला नं. ५, नेवरी रोड, विटा ता. खानापूर, जि. सांगली .
-                      </p>
-                      <p className="text-center">
-                        भगवान पाटील :- 9881447010 |  वैभव पाटील :- 9503146230
-                        {/* <hr />
-                          email ID: test@gmail.com */}
-                      </p>
                     </div>
                   </div>
                   <hr />

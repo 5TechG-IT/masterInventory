@@ -43,17 +43,17 @@ export class AddNewEntry extends Component {
             .post(API_URL, data)
             .then((res) => {
                 let _res = res.data.map((item) => {
-                    
-                    return item.name ;
+
+                    return item.name;
                 });
-                
+
                 this.setState({ products: _res });
                 // this.initializeDataTable();
                 let _response = res.data.map((item) => {
-                    
-                    return item.id ;
+
+                    return item.id;
                 });
-                
+
                 this.setState({ productIds: _response });
                 console.log(this.state.products)
 
@@ -130,95 +130,143 @@ export class AddNewEntry extends Component {
         this.fetchProducts();
     }
 
-    
+
     render() {
         return (
             <div className="row">
                 <form autoComplete="off">
-                    <div className="row ml-4">
-                       
-                        <Card style={{width:'1250px'}}>
-                       
-                    <Card.Body className="mt-0 pt-3">
-                        <div>
-                            <div className="mt-3">
-                            <FormControl
-                            variant="filled"
-                            className="mr-2 mb-2"
-                            style={{ minWidth: "150px" }}
-                            size="small"
-                        >
-                            <InputLabel id="demo-simple-select-outlined-label">
-                                Product
-                            </InputLabel>
-                            <Select
-                                labelId="demo-simple-select-outlined-label"
-                                id="demo-simple-select-outlined"
-                                onChange={(e) => {
-                                    this.setState({
-                                        productId: e.target.value,
-                                    });
-                                }}
-                                name="productId"
-                                value={this.state.productId}
-                            >
-                                {this.renderMenu()}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            id="quantity"
-                            label="Quantity"
-                            variant="outlined"
-                            type="number"
-                            className="mr-2"
-                            size="small"
-                            onChange={(e) =>
-                                this.setState({ quantity: e.target.value })
-                            }
-                        />
-                                <TextField
-                            id="amount"
-                            label="amount"
-                            variant="outlined"
-                            type="number"
-                            className="mr-2"
-                            size="small"
-                            onChange={(e) =>
-                                this.setState({ amount: e.target.value })
-                            }
-                        />
-                               <TextField
-                            id="paid"
-                            label="paid"
-                            variant="outlined"
-                            className="mr-2"
-                            type="number"
-                            size="small"
-                            onChange={(e) =>
-                                this.setState({ paid: e.target.value })
-                            }
-                        />
-                                <Button
-                            color="primary"
-                            variant="contained"
-                            className="mb-3"
-                            onClick={(e) => this.handleAddSubmit(e)}
-                        >
-                            <FontAwesomeIcon icon={faPlusCircle} size="2x" />
-                        </Button>
-                        <Button
-                            color="secondary"
-                            variant="contained"
-                            className="mb-3 ml-2"
-                            onClick={this.props.refreshLedger}
-                        >
-                            <FontAwesomeIcon icon={faSyncAlt} size="2x" />
-                        </Button> 
-                            </div>
-                        </div>
-                    </Card.Body>
-                </Card>
-                    </div>
+                    {/* <div className="row ml-4">
+
+                        <Card style={{ width: '1250px' }}>
+
+                            <Card.Body className="mt-0 pt-3">
+                                <div>
+                                    <div className="mt-3">
+                                        <FormControl
+                                            variant="filled"
+                                            className="mr-2 mb-2"
+                                            style={{ minWidth: "150px" }}
+                                            size="small"
+                                        >
+                                            <InputLabel id="demo-simple-select-outlined-label">
+                                                Product
+                                            </InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-outlined-label"
+                                                id="demo-simple-select-outlined"
+                                                onChange={(e) => {
+                                                    this.setState({
+                                                        productId: e.target.value,
+                                                    });
+                                                }}
+                                                name="productId"
+                                                value={this.state.productId}
+                                            >
+                                                {this.renderMenu()}
+                                            </Select>
+                                        </FormControl>
+                                        <TextField
+                                            id="quantity"
+                                            label="Quantity"
+                                            variant="outlined"
+                                            type="number"
+                                            className="mr-2"
+                                            size="small"
+                                            onChange={(e) =>
+                                                this.setState({ quantity: e.target.value })
+                                            }
+                                        />
+                                        <TextField
+                                            id="amount"
+                                            label="amount"
+                                            variant="outlined"
+                                            type="number"
+                                            className="mr-2"
+                                            size="small"
+                                            onChange={(e) =>
+                                                this.setState({ amount: e.target.value })
+                                            }
+                                        />
+                                        <TextField
+                                            id="paid"
+                                            label="paid"
+                                            variant="outlined"
+                                            className="mr-2"
+                                            type="number"
+                                            size="small"
+                                            onChange={(e) =>
+                                                this.setState({ paid: e.target.value })
+                                            }
+                                        />
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                            className="mb-3"
+                                            onClick={(e) => this.handleAddSubmit(e)}
+                                        >
+                                            <FontAwesomeIcon icon={faPlusCircle} size="2x" />
+                                        </Button>
+                                        <Button
+                                            color="secondary"
+                                            variant="contained"
+                                            className="mb-3 ml-2"
+                                            onClick={this.props.refreshLedger}
+                                        >
+                                            <FontAwesomeIcon icon={faSyncAlt} size="2x" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                    </div> */}
+                    <Card>
+          <Card.Body className="mt-0 pt-3">
+            <h6>Add Expenses</h6>
+            <form
+              noValidate
+              autoComplete="off"
+              onSubmit={(e) => this.handleSubmit(e, this.state)}
+            >
+              <div className="mt-3">
+                <TextField
+                  id="amount"
+                  label="Amount"
+                  variant="outlined"
+                  type="number"
+                  size="small"
+                  value={this.state.amount}
+                  className="mr-3"
+                  onChange={(e) => this.setState({ amount: e.target.value })}
+                />
+                <TextField
+                  id="description"
+                  label="Description"
+                  variant="outlined"
+                  size="small"
+                  value={this.state.description}
+                  className="mr-3"
+                  style={{ minWidth: "30vw" }}
+                  onChange={(e) =>
+                    this.setState({ description: e.target.value })
+                  }
+                />
+                <TextField
+                  id="date"
+                  label="date"
+                  variant="outlined"
+                  type="date"
+                  size="small"
+                  value={this.state.date}
+                  className="mr-3"
+                  onChange={(e) => this.setState({ date: e.target.value })}
+                />
+                <Button variant="contained" color="primary" type="submit">
+                  Add expense
+                </Button>
+              </div>
+            </form>
+          </Card.Body>
+        </Card>
                 </form>
                 <ToastContainer />
             </div>

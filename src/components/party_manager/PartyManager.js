@@ -18,6 +18,7 @@ import {
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 import { Row, Col, Button as Btn1, Modal, Badge } from "react-bootstrap";
 
+
 // font awasome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -29,7 +30,6 @@ import {
 
 // Toastify imports
 import { ToastContainer, toast } from "react-toastify";
-// import "../ledger_manager/exportManager/node_modules/react-toastify/dist/ReactToastify.css";
 
 //API handling components
 import { API_URL } from "./../../global";
@@ -57,7 +57,6 @@ require("datatables.net-scroller-bs4");
 require("datatables.net-select-bs4");
 require("pdfmake");
 
-// constants
 const axios = require("axios");
 
 class PartyManager extends Component {
@@ -75,7 +74,6 @@ class PartyManager extends Component {
       activePartyCity: "",
       activePartyType: 1,
       partiesData: null,
-
       isLoading: false,
     };
   }
@@ -88,11 +86,9 @@ class PartyManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("party data: ", res.data);
         this.setState({ partiesData: res.data, isLoading: false });
       })
       .catch((err) => {
-        console.log("party data error: ", err);
         this.setState({ isLoading: false });
       });
   }
@@ -114,10 +110,9 @@ class PartyManager extends Component {
         setTimeout(() => {
           this.refreshParties();
         }, 2000);
-        // this.fetchPartiesData();
       })
       .catch((err) => {
-        console.log("error while updating party data", err);
+        toast.danger("error while updating party data", err);
       });
   }
 
@@ -142,6 +137,8 @@ class PartyManager extends Component {
       })
       .catch((err) => {
         console.log(err);
+        toast.error("Party details not added succesfully");
+
       });
   }
 
@@ -152,15 +149,13 @@ class PartyManager extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log("deleted status data: ", res.data);
-        console.log("Party deleted successfully");
         toast.error("Party deleted successfully");
         setTimeout(() => {
           this.refreshParties();
         }, 2000);
       })
       .catch((err) => {
-        console.log("record delete error: ", err);
+        toast.error("Party not deleted successfully");
       });
   }
 
@@ -178,38 +173,43 @@ class PartyManager extends Component {
 
   componentDidUpdate() {
     const title = "Parties list";
-    $("#party_table").DataTable({
-      destroy: true,
-      dom:
-        "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
-        "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
-        "<'row'<'col-sm-12' tr>>" +
-        "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
-      buttons: [
-        {
-          extend: "csv",
-          title,
-          download: "open",
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6],
-          },
+    $(document).ready(function () {
+      $("#party_table").DataTable({
+        destroy: true,
+        rowReorder: {
+          selector: 'td:nth-child(2)'
         },
-        {
-          extend: "print",
-          title,
-          messageTop: `<h4 style='text-align:center'>${title}</h4>`,
-          download: "open",
-          exportOptions: {
-            columns: [0, 1, 2, 3, 4, 5, 6],
+        responsive: true,
+        dom:
+          "<'row mb-2'<'col-sm-9' B><'col-sm-3' >>" +
+          "<'row mb-2'<'col-sm-9' l><'col-sm-3' f>>" +
+          "<'row'<'col-sm-12' tr>>" +
+          "<'row'<'col-sm-7 mt-2 mr-5 pr-4'i><'ml-5' p>>",
+        buttons: [
+          {
+            extend: "csv",
+            title,
+            download: "open",
+            exportOptions: {
+              columns: [0, 1, 2, 3, 4, 5, 6],
+            },
           },
-        },
-      ],
+          {
+            extend: "print",
+            title,
+            messageTop: `<h4 style='text-align:center'>${title}</h4>`,
+            download: "open",
+            exportOptions: {
+              columns: [0, 1, 2, 3, 4, 5, 6],
+            },
+          },
+        ],
+      });
     });
   }
 
   renderPartiesData = () => {
     const parties = this.state.partiesData;
-
     if (parties == null) {
       return null;
     }
@@ -236,7 +236,7 @@ class PartyManager extends Component {
           <td align="center">
             {party["type"] == 1 ? "Retailer" : party["type"] == 2 ? "Distributor" : party["type"] == 3 ? " wholesaler" : "customer"}
           </td>
-          
+
           <td align="center">
             <Button
               color="secondary"
@@ -261,7 +261,7 @@ class PartyManager extends Component {
                 className="mx-1"
                 color="primary"
                 variant="contained"
-                onClick={(e) => {}}
+                onClick={(e) => { }}
               >
                 <FontAwesomeIcon icon={faBook} />
               </Button>
@@ -330,7 +330,7 @@ class PartyManager extends Component {
                     }
                   />
                 </Col>
-                  <Col>
+                <Col>
                   <TextField
                     id="aadharNo"
                     label="Aadhar No"
@@ -426,7 +426,7 @@ class PartyManager extends Component {
       </Modal>
     );
   }
-  
+
 
   render() {
     return (
@@ -619,7 +619,7 @@ class PartyManager extends Component {
                   {!this.state.isLoading && (
                     <table
                       id="party_table"
-                      className="display"
+                      class="display nowrap"
                       style={{ width: "100%" }}
                     >
                       <thead>
