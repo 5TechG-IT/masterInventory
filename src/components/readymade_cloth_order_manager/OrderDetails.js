@@ -24,11 +24,9 @@ function OrderDetails(props) {
 		axios
 			.post(url, data)
 			.then((res) => {
-				console.log(res.data);
 				setItemData(res.data);
 			})
 			.catch((err) => {
-				console.log(err);
 			});
 	};
 	return (

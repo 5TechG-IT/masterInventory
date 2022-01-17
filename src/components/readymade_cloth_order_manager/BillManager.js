@@ -986,14 +986,14 @@ export default class BillManager extends Component {
               <Card className="mt-2 p-0">
                 <Card.Header>
                   <div className="row">
-                    <div className="col-2 col-md-2 text-center">
+                    {/* <div className="col-2 col-md-2 text-center">
                       <img
                         style={{ marginLeft: '-1.5em' }}
                         src="/Assets/patil.png"
                         height="200"
                         width="200"
                       />
-                    </div>
+                    </div> */}
                     <div className="col-10">
                       <h5 className="text-center pb-0 mb-0">
                         <h2><b>MASTER INVENTORY</b></h2>

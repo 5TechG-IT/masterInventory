@@ -30,7 +30,6 @@ export class AddNewEntry extends Component {
             amount: 0,
             paid: 0,
             pending: 0,
-
             productIds: null,
             products: null,
         };
@@ -48,16 +47,11 @@ export class AddNewEntry extends Component {
                 });
 
                 this.setState({ products: _res });
-                // this.initializeDataTable();
                 let _response = res.data.map((item) => {
-
                     return item.id;
                 });
 
                 this.setState({ productIds: _response });
-                console.log(this.state.products)
-
-                console.log(this.state.productIds)
             })
             .catch((err) => {
                 console.log("product data fetch error: ", err);
@@ -84,13 +78,11 @@ export class AddNewEntry extends Component {
         axios
             .post(API_URL, data)
             .then((res) => {
-                console.log("Product count updated successfully");
                 setTimeout(() => {
                     this.props.refreshLedger();
                 }, 2000);
             })
             .catch((err) => {
-                console.log(err);
             });
     }
 
@@ -99,9 +91,7 @@ export class AddNewEntry extends Component {
 
         // calculate pending amount
         let pending = this.state.amount - this.state.paid;
-
         const query = `INSERT INTO stockLedger(productId, quantity, amount, paid, pending) VALUES(${this.state.productId}, ${this.state.quantity}, ${this.state.amount}, ${this.state.paid}, ${pending});`;
-        console.log(query)
         let data = {
             crossDomain: true,
             crossOrigin: true,
@@ -114,7 +104,7 @@ export class AddNewEntry extends Component {
                 toast.success("Product Tracking record added successfully");
             })
             .catch((err) => {
-                console.log(err);
+                toast.error("Product Tracking record adding error");
             });
     }
 
@@ -135,7 +125,7 @@ export class AddNewEntry extends Component {
         return (
             <div className="row">
                 <form autoComplete="off">
-                    {/* <div className="row ml-4">
+                    <div className="row ml-4">
 
                         <Card style={{ width: '1250px' }}>
 
@@ -218,55 +208,7 @@ export class AddNewEntry extends Component {
                                 </div>
                             </Card.Body>
                         </Card>
-                    </div> */}
-                    <Card>
-          <Card.Body className="mt-0 pt-3">
-            <h6>Add Expenses</h6>
-            <form
-              noValidate
-              autoComplete="off"
-              onSubmit={(e) => this.handleSubmit(e, this.state)}
-            >
-              <div className="mt-3">
-                <TextField
-                  id="amount"
-                  label="Amount"
-                  variant="outlined"
-                  type="number"
-                  size="small"
-                  value={this.state.amount}
-                  className="mr-3"
-                  onChange={(e) => this.setState({ amount: e.target.value })}
-                />
-                <TextField
-                  id="description"
-                  label="Description"
-                  variant="outlined"
-                  size="small"
-                  value={this.state.description}
-                  className="mr-3"
-                  style={{ minWidth: "30vw" }}
-                  onChange={(e) =>
-                    this.setState({ description: e.target.value })
-                  }
-                />
-                <TextField
-                  id="date"
-                  label="date"
-                  variant="outlined"
-                  type="date"
-                  size="small"
-                  value={this.state.date}
-                  className="mr-3"
-                  onChange={(e) => this.setState({ date: e.target.value })}
-                />
-                <Button variant="contained" color="primary" type="submit">
-                  Add expense
-                </Button>
-              </div>
-            </form>
-          </Card.Body>
-        </Card>
+                    </div>
                 </form>
                 <ToastContainer />
             </div>
